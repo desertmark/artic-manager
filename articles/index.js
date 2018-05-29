@@ -11,11 +11,19 @@ router.get('/', (req,res) => {
     .catch(err => {
         console.error('GET: Articles', err);
         res.status(500).send(err);
-    })
+    });
 });
 
 router.get('/:id', (req,res) => {
-    res.send('Show Article`s details with id: ' + req.params.id);
+    Article.findById(req.params.id)
+    .then(article => {
+        console.log('GET/id: Articles', article);
+        res.send(article);
+    })
+    .catch(err => {
+        console.error('GET/id: Article', err);
+        res.status(500).send(err);
+    });
 });
 
 router.post('/:id', (req,res) => {
