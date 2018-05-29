@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Article = require('./articles.js');
+const middlewares = require('./articles-middlewares');
 
+router.param('id', middlewares.findById);
 
-router.get('/', (req,res) => {
+router.get('/', (req, res) => {
     Article.find().then(articles => {
         console.log('GET: Articles', articles.length);
         res.send(articles);
@@ -15,15 +17,7 @@ router.get('/', (req,res) => {
 });
 
 router.get('/:id', (req,res) => {
-    Article.findById(req.params.id)
-    .then(article => {
-        console.log('GET/id: Articles', article);
-        res.send(article);
-    })
-    .catch(err => {
-        console.error('GET/id: Article', err);
-        res.status(500).send(err);
-    });
+    res.send(res.locals.article);
 });
 
 router.post('/', (req,res) => {
@@ -45,4 +39,7 @@ router.put('/:id', (req,res) => {
 router.delete('/:id', (req,res) => {
     res.send('Remove an Article');
 });
+
+
+
 module.exports = router;
