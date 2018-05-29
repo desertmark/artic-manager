@@ -26,8 +26,16 @@ router.get('/:id', (req,res) => {
     });
 });
 
-router.post('/:id', (req,res) => {
-    res.send('Create an Article');
+router.post('/', (req,res) => {
+    Article.create(req.body)
+    .then(article => {
+        console.log('POST: Articles', article);
+        res.status(201).send(article);
+    })
+    .catch(err => {
+        console.error('POST: Article', err);
+        res.status(500).send(err);
+    })
 });
 
 router.put('/:id', (req,res) => {
