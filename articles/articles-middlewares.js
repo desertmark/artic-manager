@@ -8,7 +8,7 @@ function findById(req ,res, next, id) {
     }
     articlesService.findById(id).then(article => {
         if (article) {
-            res.locals.article = article.toObject();
+            res.locals.article = article;
             next();
         } else {
             res.status(404).send('Article not found');

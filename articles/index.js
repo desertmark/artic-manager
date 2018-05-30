@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req,res) => {
-    res.send(res.locals.article);
+    res.send(res.locals.article.toObject());
 });
 
 router.post('/', (req,res) => {
@@ -31,11 +31,20 @@ router.post('/', (req,res) => {
     .catch(err => {
         console.error('POST: Article', err);
         res.status(err.status).send(err);
-    })
+    });
 });
 
-router.put('/:id', (req,res) => {
-    res.send('Update an Article');
+router.put('/:id', (req, res) => {
+    req.body.id = res.locals.article._id;
+    service.updateArticle(req.body)
+    .then(article => {
+        console.log('PUT: Articles', article)
+        res.status(200).send();
+    })
+    .catch(err => {
+        console.error('PUT: Article', err);
+        res.status(err.status).send(err);
+    });
 });
 
 router.delete('/:id', (req,res) => {

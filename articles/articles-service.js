@@ -44,6 +44,21 @@ function createArticle(articleJson) {
 }
 
 /**
+ * Performs a partial article of the given fields. If succeeded returns the updated article.
+ * @param {*} article 
+ */
+function updateArticle(article) {
+    return Article.findByIdAndUpdate(article.id, { $set: article })
+    .catch(err => {
+        return {
+            status: 500,
+            message:'Mongoose Error',
+            error
+        }
+    });
+}
+
+/**
  * Checks if all the mandatory properties are set with valid values.
  * @param {*} article 
  * @returns {Boolean} Boolean
@@ -81,5 +96,6 @@ function articleFactory(model) {
 module.exports = {
     findById,
     list,
-    createArticle
+    createArticle,
+    updateArticle
 }
