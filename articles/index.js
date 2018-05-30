@@ -39,7 +39,7 @@ router.put('/:id', (req, res) => {
     service.updateArticle(req.body)
     .then(article => {
         console.log('PUT: Articles', article)
-        res.status(200).send();
+        res.send();
     })
     .catch(err => {
         console.error('PUT: Article', err);
@@ -48,7 +48,15 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req,res) => {
-    res.send('Remove an Article');
+    service.removeArticle(res.locals.article._id)
+    .then(article => {
+        console.log('DELETE: Article', article);
+        res.send();
+    })
+    .catch(err => {
+        console.error('DELETE: Article', err);
+        res.status(err.status).send(err);
+    });
 });
 
 

@@ -59,6 +59,21 @@ function updateArticle(article) {
 }
 
 /**
+ * Removes the article with the given id from the database.
+ * @param {string} id
+ */
+function removeArticle(id) {
+    return Article.findByIdAndRemove(id)
+    .catch(err => {
+        return {
+            status: 500,
+            message:'Mongoose Error',
+            error
+        }
+    });
+}
+
+/**
  * Checks if all the mandatory properties are set with valid values.
  * @param {*} article 
  * @returns {Boolean} Boolean
@@ -97,5 +112,6 @@ module.exports = {
     findById,
     list,
     createArticle,
-    updateArticle
+    updateArticle,
+    removeArticle
 }

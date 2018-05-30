@@ -11,12 +11,19 @@ function findById(req ,res, next, id) {
             res.locals.article = article;
             next();
         } else {
-            res.status(404).send('Article not found');
+            res.status(404).send({
+                status:404,
+                message: 'Article not found'
+            });
         }
     })
-    .catch(err => {
-        console.error('findById:', err.message || err);
-        res.status(500).send(err.message || err);
+    .catch(error => {
+        console.error('findById:', error.message || error);
+        res.status(500).send({
+            status:500,
+            message: 'Mongoose Error',
+            error
+        });
     });
 }
 
