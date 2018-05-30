@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Article = require('./articles.js');
+const service = require('./articles-service.js');
 const middlewares = require('./articles-middlewares');
 
 router.param('id', middlewares.findById);
 
 router.get('/', (req, res) => {
-    Article.find().then(articles => {
+    service.list(req.query.page, req.query.size)
+    .then(articles => {
         console.log('GET: Articles', articles.length);
         res.send(articles);
     })
@@ -21,14 +23,14 @@ router.get('/:id', (req,res) => {
 });
 
 router.post('/', (req,res) => {
-    Article.create(req.body)
+    service.createArticle(req.body)
     .then(article => {
         console.log('POST: Articles', article);
         res.status(201).send(article);
     })
     .catch(err => {
         console.error('POST: Article', err);
-        res.status(500).send(err);
+        res.status(err.status).send(err);
     })
 });
 

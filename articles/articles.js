@@ -3,10 +3,21 @@ const Schema = mongoose.Schema;
 mongoose.connect('mongodb://localhost/test');
 
 const Article = mongoose.model('Article', new Schema({
-    name: String,
-    description: String,
-    code: String,
-    price: Number
+    code:String,
+    description:String,
+    price:Number,
+    bonus:Number,
+    bonus2:Number,
+    cashDiscount:Number,
+    cashDiscount2:Number,
+    cost:Number,
+    utility:Number,
+    listPrice:Number,
+    vat:Number,
+    dolar:Number,
+    transport:Number,
+    categoryId:String,
+    card:Number
 }));
 
 module.exports = Article;
