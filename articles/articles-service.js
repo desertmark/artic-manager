@@ -11,14 +11,25 @@ function findById(id) {
  * @param {Object} filter filter object to search by specific conditions or properties. Defaults is `{}`
  * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
  */
-function list(page, pageSize, filter = {}) {
+function list(page, pageSize, filter = {}, fields = null) {
     page = parseInt(page) || 0;
     size = parseInt(pageSize) || 20;
-    return Article
-    .find(filter)
+
+    // optional filters: matching codes and/or partial description match
+    let queryFilter = {};
+    if(filter.code) queryFilter.code = { $eq: filter.code };
+    if(filter.description) queryFilter.description = { $text: { $search: filter.description }};
+
+    const query = Article
+    .find(queryFilter)
     .sort('description')
     .skip(page*size)
     .limit(size)
+
+    if(fields) {
+        query.select(fields);
+    }
+    return query;
 }
 
 function createArticle(articleJson) {

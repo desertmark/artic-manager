@@ -5,9 +5,8 @@ const service = require('./articles-service.js');
 const middlewares = require('./articles-middlewares');
 
 router.param('id', middlewares.findById);
-
-router.get('/', (req, res) => {
-    service.list(req.query.page, req.query.size)
+router.get('/', middlewares.parseFields, (req, res) => {
+    service.list(req.query.page, req.query.size, {}, res.locals.fields)
     .then(articles => {
         console.log('GET: Articles', articles.length);
         res.send(articles);

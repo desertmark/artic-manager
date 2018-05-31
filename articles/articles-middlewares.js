@@ -27,4 +27,19 @@ function findById(req ,res, next, id) {
     });
 }
 
-module.exports = {findById};
+function parseFields(req, res, next) {
+    if(req.query && req.query.fields) {
+        const fieldsArray = req.query.fields.split(",");
+        let fields = {};
+        fieldsArray.forEach(field => {
+            fields[field] = 1;
+        });
+        res.locals.fields = fields;
+    }
+    next();
+}
+
+module.exports = {
+    findById,
+    parseFields
+};
