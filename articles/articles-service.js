@@ -6,19 +6,20 @@ function findById(id) {
 
 /**
  * Query Articles table and paginates results.
- * @param {Number} page Page number. Default is 0
- * @param {Number} pageSize Page Size. Default is 20
- * @param {Object} filter filter object to search by specific conditions or properties. Defaults is `{}`
+ * @param {Number} page Page number. Default is 0.
+ * @param {Number} pageSize Page Size. Default is 20.
+ * @param {Object} filter filter object to search by code or partial description. Example is `{code:"00.00.55.03", description:"PVC"}`.
+ * @param {Object | String} fields fields for the query to return. If not passed returns all of them. Pass it like ``{fieldName:1}`` or ``"fieldName1 fieldName2"``.
  * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
  */
-function list(page, pageSize, filter = {}, fields = null) {
+function listArticles(page, pageSize, filter = {}, fields = null) {
     page = parseInt(page) || 0;
     size = parseInt(pageSize) || 20;
 
     // optional filters: matching codes and/or partial description match
     let queryFilter = {};
     if(filter.code) queryFilter.code = { $eq: filter.code };
-    if(filter.description) queryFilter.description = { $text: { $search: filter.description }};
+    if(filter.description) queryFilter.description = { $regex: `.*${filter.description}.*` };
 
     const query = Article
     .find(queryFilter)
@@ -121,7 +122,7 @@ function articleFactory(model) {
 
 module.exports = {
     findById,
-    list,
+    listArticles,
     createArticle,
     updateArticle,
     removeArticle

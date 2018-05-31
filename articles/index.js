@@ -6,7 +6,7 @@ const middlewares = require('./articles-middlewares');
 
 router.param('id', middlewares.findById);
 router.get('/', middlewares.parseFields, (req, res) => {
-    service.list(req.query.page, req.query.size, {}, res.locals.fields)
+    service.listArticles(req.query.page, req.query.size, {}, res.locals.fields)
     .then(articles => {
         console.log('GET: Articles', articles.length);
         res.send(articles);
@@ -30,6 +30,18 @@ router.post('/', (req,res) => {
     .catch(err => {
         console.error('POST: Article', err);
         res.status(err.status).send(err);
+    });
+});
+
+router.post('/search', middlewares.parseFields, (req, res) => {
+    service.listArticles(req.query.page, req.query.size, req.body, res.locals.fields)
+    .then(articles => {
+        console.log('GET: Articles', articles.length);
+        res.send(articles);
+    })
+    .catch(err => {
+        console.error('GET: Articles', err);
+        res.status(500).send(err);
     });
 });
 
