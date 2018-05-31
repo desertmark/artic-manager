@@ -6,8 +6,14 @@
     "configurations": [
         {
             "type": "node",
+            "request": "attach",
+            "name": "Insert Data",
+            "port": 9229
+        },
+        {
+            "type": "node",
             "request": "launch",
-            "name": "nodemon",
+            "name": "Api (Autoreload)",
             "runtimeExecutable": "nodemon",
             "program": "${workspaceFolder}/index.js",
             "restart": true,
