@@ -12,18 +12,18 @@ function findById(id) {
  * @param {Object | String} fields fields for the query to return. If not passed returns all of them. Pass it like ``{fieldName:1}`` or ``"fieldName1 fieldName2"``.
  * @returns {DocumentQuery<Category>} DocumentQuery<Category>. call ``then`` to get results.
  */
-function listCategories(page, pageSize, filter = {}) {
+function listCategories(page, pageSize, filter) {
     page = parseInt(page) || 0;
     size = parseInt(pageSize) || 20;
 
     // optional filters: matching codes and/or partial description match
     let queryFilter = {};
-    if(filter.description) queryFilter.description = { $regex: `.*${filter.description}.*` };
+    if(filter) queryFilter.description = { $regex: `.*${filter}.*` };
 
     const query = Category
     .find(queryFilter)
     .sort('description')
-    .skip(page*size)
+    .skip(page*size) 
     .limit(size)
     return query;
 }

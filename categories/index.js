@@ -4,7 +4,8 @@ const Category = require('./categories.js');
 const service = require('./categories-service.js');
 
 router.get('/', (req, res) => {
-    service.listCategories(req.query.page, req.query.size).then(categories => {
+    service.listCategories(req.query.page, req.query.size, req.query.q)
+    .then(categories => {
         res.send(categories);
     })
     .catch(err => {

@@ -6,9 +6,13 @@
     "configurations": [
         {
             "type": "node",
-            "request": "attach",
-            "name": "Insert Data",
-            "port": 9229
+            "request": "launch",
+            "name": "InsertAll",
+            "program": "${workspaceFolder}/data/insert-data.js",
+            "args": [
+                "-action",
+                "insertAll"
+            ]
         },
         {
             "type": "node",

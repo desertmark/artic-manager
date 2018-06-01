@@ -1,7 +1,8 @@
-const articles = require('./sanita.json');
+var   articles = require('./sanita.json');
 const Article = require('../articles/articles');
 const Category = require('../categories/categories');
 const _ = require('lodash');
+require('../util');
 
 const actionIx = process.argv.findIndex(x => x === '-action');
 if(actionIx === -1) {
@@ -75,12 +76,16 @@ function insertAll() {
  * And insert them in the DB.
  */
 function createAndInsertCategories(articles) {
-    const categories = _.uniq(articles.map(x => x.categoryDescription)).map(cat => {
+    articles = articles.map(x =>  {
+        x.cleanCategoryDescription = x.categoryDescription.cleanSpaces().capitalize();
+        return x;
+    });
+    const categoriesToInsert = _.uniq(articles.map(cat => cat.cleanCategoryDescription)).map(cat => {
         return {
             description: cat
         }
     });
-    return Category.insertMany(categories).then(insertedCategories => {
+    return Category.insertMany(categoriesToInsert).then(insertedCategories => {
         console.log('Categories Inserted: ', insertedCategories.length)
         return insertedCategories
     });
@@ -136,7 +141,7 @@ function createAndInsertArticles(articles, categories) {
  */
 function mapCategoryDescriptionToCategoryId(articles, categories) {
     const mappedArticles = articles.map(art => {
-        art.categoryId = categories.find(cat => cat.description === art.categoryDescription)._id || undefined;
+        art.categoryId = categories.find(cat => cat.description === art.cleanCategoryDescription)._id || undefined;
         return art;
     });
     return mappedArticles;
