@@ -23,6 +23,7 @@ function listArticles(page, pageSize, filter = {}, fields = null) {
 
     const query = Article
     .find(queryFilter)
+    .populate('category')
     .sort('description')
     .skip(page*size)
     .limit(size)

@@ -16,7 +16,7 @@ const Article = mongoose.model('Article', new Schema({
     vat:Number,
     dolar:Number,
     transport:Number,
-    categoryId:String,
+    category: {type: Schema.Types.ObjectId, ref: 'Category'},
     card:Number
 }));
 

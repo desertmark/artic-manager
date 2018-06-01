@@ -107,7 +107,7 @@ function createAndInsertCategories(articles) {
  * ```
  * {
  *  ...
- *  categoryId:"a mongoDB ObjectId"
+ *  category: "a mongoDB ObjectId"
  *  ...
  * }
  * ```
@@ -134,14 +134,14 @@ function createAndInsertArticles(articles, categories) {
  * ```
  * {
  *  ...
- *  categoryId:"a mongoDB ObjectId"
+ *  category: "a mongoDB ObjectId"
  *  ...
  * }
  * ```
  */
 function mapCategoryDescriptionToCategoryId(articles, categories) {
     const mappedArticles = articles.map(art => {
-        art.categoryId = categories.find(cat => cat.description === art.cleanCategoryDescription)._id || undefined;
+        art.category = categories.find(cat => cat.description === art.cleanCategoryDescription)._id || undefined;
         return art;
     });
     return mappedArticles;
