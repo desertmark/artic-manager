@@ -9,25 +9,40 @@ router.get('/', (req, res) => {
         res.send(categories);
     })
     .catch(err => {
-        console.error(err);
+        console.error('GET: Category',err);
         res.status(500).send(err);
     })
 });
 
 router.get('/:id', (req,res) => {
-    res.send(req.params.id);
+    service.findById(req.params.id)
+    .then(category => {
+        res.send(category);
+    })
+    .catch(err => {
+        console.error('GET: /:id Category', err);
+        res.status(err.status || 500).send(err);
+    });
 });
 
 router.post('/', (req,res) => {
-    res.status(201).send(req.params.id);
-});
-
-router.put('/:id', (req, res) => {
-    res.send(req.params.id);
+    service.createCategory(req.body.description).then(category => {
+        res.status(201).send(category);
+    })
+    .catch(err => {
+        console.error('POST: Category',err);
+        res.status(err.status || 500).send(err);
+    })
 });
 
 router.delete('/:id', (req,res) => {
-    res.send(req.params.id);
+    service.removeCategory(req.params.id).then(cat => {
+        res.send({message: 'Category Removed.'});
+    })
+    .catch(err => {
+        console.error('DELETE: /:id Category', err);
+        res.status(err.status).send(err)
+    });
 });
 
 module.exports = router;

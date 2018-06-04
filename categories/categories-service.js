@@ -1,7 +1,16 @@
 const Category = require('./categories');
+const BusinessError = require('../util/business-error');
+require('../util');
 
 function findById(id) {
-    return Article.findById(id);
+    return Category.findById(id)
+    .catch(err => {
+        return {
+            status: 500,
+            message: 'Mongoose Error',
+            error
+        }
+    });
 }
 
 /**
@@ -18,7 +27,7 @@ function listCategories(page, pageSize, filter) {
 
     // optional filters: matching codes and/or partial description match
     let queryFilter = {};
-    if(filter) queryFilter.description = { $regex: `.*${filter}.*` };
+    if(filter) queryFilter.description = { $regex: new RegExp(`.*${filter}.*`,'i') };
 
     const query = Category
     .find(queryFilter)
@@ -28,8 +37,50 @@ function listCategories(page, pageSize, filter) {
     return query;
 }
 
+/**
+ * Takes a string with the category description and creates and stores in the database a new Category Document.
+ * @param {String} category Category description
+ * @returns {Promise<Category>} Returns a Promise of the new category with it's ObjectId loaded under ``_id`` property.
+ */
+function createCategory(category) {
+    const formattedCategory = category.cleanSpaces().capitalize();
+    return Category
+    .count({description: formattedCategory})
+    .then(count => {
+        if(count > 0) {
+            return Promise.reject({
+                message: 'Create Category Error: Category Already Exists', 
+                status:400
+            });
+        }
+        return Category.create({description: formattedCategory})
+        .catch(error => {
+            return {
+                status: 500,
+                message: 'Mongoose Error: Create Category',
+                error
+            }
+        })
+    });
+}
+/**
+ * Removes a Category from the Database. If it not exists, it completes succesfully anyway.
+ * @param {ObjectId} id CategoryId
+ */
+function removeCategory(id) {
+    return Category.findByIdAndRemove(id)
+    .catch(err => {
+        return {
+            status: 500,
+            message: 'Mongoose Error',
+            error
+        }
+    })
+}
 
 module.exports = {
     findById,
-    listCategories
+    listCategories,
+    createCategory,
+    removeCategory
 }
