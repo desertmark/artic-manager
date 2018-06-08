@@ -30,6 +30,10 @@ function createUser(user) {
     .catch(handleError);
 }
 
+function updateUser(id, fields) {
+    return User.findByIdAndUpdate(id,{$set:fields});
+}
+
 function isValid(user) {
     //TODO: add password validations.
     return user.email && user.password;
@@ -43,5 +47,6 @@ function handleError(err) {
 module.exports = {
     findById,
     findByEmail,
-    createUser
+    createUser,
+    updateUser
 }

@@ -20,7 +20,19 @@ function handleError(err) {
 }
 
 function generateToken(user) {
-    return jwt.sign(user, config.secret, {expiresIn:3600});
+    const userService = require('../users/user-service');
+    return generateNonce().then(nonce => {
+        return userService.updateUser(user._id, {nonce}).then(u => {
+            if(!u) {
+                return Promise.reject({status:404, message: 'User not found.'});
+            }
+            return jwt.sign(user, config.secret + nonce, {expiresIn:3600});
+        });
+    });
+}
+
+function generateNonce() {
+    return bcrypt.genSalt(10);
 }
 
 function getClaims(user) {
@@ -48,12 +60,21 @@ function login(email, password) {
                     message:'Invalid password.'
                 });
             }
-            return {
-                token: generateToken(user.toObject()),
-                claims: getClaims(user.toObject())
-            }
+            return generateToken(user.toObject()).then(token => {
+                return {
+                    token,
+                    claims: getClaims(user.toObject())
+                };
+            })
         });
     })
+}
+
+function logout(token) {
+    const userService = require('../users/user-service');
+    const decodedToken = jwt.decode(token);
+    const userId = decodedToken._id;
+    return userService.updateUser(userId, {nonce: null});
 }
 
 module.exports = {
@@ -61,5 +82,6 @@ module.exports = {
     hashPassword,
     generateToken,
     getClaims,
-    login
+    login,
+    logout
 }

@@ -7,7 +7,20 @@ ExtractJwt = require('passport-jwt').ExtractJwt;
 module.exports = (passport) => {
     const opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: config.secret,
+        secretOrKeyProvider: (request, rawJwtToken, done) => {
+            const payload = jwt.decode(rawJwtToken);
+            const userId = payload._id;
+            userService.findById(userId).then(user => {
+                done(null, config.secret + user.nonce);
+            })
+            .catch(error => {
+                done({
+                    status: 500,
+                    message: 'Mongoose Error',
+                    error
+                }, null);
+            });
+        },
     //    issuer: 'accounts.examplesoft.com',
     //    audience: 'yoursite.net',
     }

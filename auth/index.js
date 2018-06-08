@@ -15,9 +15,14 @@ router.post('/login', (req,res) => {
 });
 
 //TODO: Not working. Tokens are still valid after doing logout.
-router.get('/logout', (req, res) => {
-    req.logout();
-    res.sendStatus(200);
+router.get('/logout', passport.authenticate('jwt',{session:false}), (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    authService.logout(token).then(() => {
+        res.sendStatus(200);    
+    }).catch(err => {
+        res.status(err.status || 500).json(err);
+    });
+    
 });
 
 router.get('/isAuthenticated', passport.authenticate('jwt', {session: false}), (req, res) => {
