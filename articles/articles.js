@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-mongoose.connect('mongodb://localhost/test');
+const config = require('../config/config.json');
+mongoose.connect(config.dbConnection);
 
 const Article = mongoose.model('Article', new Schema({
     code:String,

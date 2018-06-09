@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-mongoose.connect('mongodb://localhost/test');
+const config = require('../config/config.json');
+mongoose.connect(config.dbConnection);
 
 module.exports = mongoose.model('User', new Schema({
     email: {type: String, required: true, unique: true},

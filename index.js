@@ -8,6 +8,7 @@ const articlesRouter    = require('./articles');
 const categoriesRouter  = require('./categories');
 const authRouter        = require('./auth');
 const userRouter        = require('./users');
+require('./data/seed-data')();
 
 app.use(bodyParser.json());
 //PASSPORT
