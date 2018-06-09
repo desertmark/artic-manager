@@ -8,5 +8,6 @@ module.exports = mongoose.model('User', new Schema({
     passwordHash: {type: String, required: true},
     nonce: String,
     firstName: String,
-    lastName: String
+    lastName: String,
+    role: {type:String, require: true}
 }));
