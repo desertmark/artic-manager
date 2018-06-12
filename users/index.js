@@ -6,6 +6,7 @@ const awilixExpress = require('awilix-express');
 const UserController = require('./user-controller');
 
 function createRouter(container) {
+   
     // This Endpoints are only available for Authenticated users.
     router.use(passport.authenticateJwt());
 
@@ -16,9 +17,9 @@ function createRouter(container) {
         .catch(err => {
             console.error('GET: /:id', err);
             res.status(err.status || 500).json(err);
-        });;
+        });
     });
-    
+
     const controller = awilixExpress.makeInvoker(UserController);
     router.get('/', controller('getAll'));
 

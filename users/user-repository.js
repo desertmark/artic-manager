@@ -17,7 +17,6 @@ class UserRepository {
      * @returns {DocumentQuery<Article>} DocumentQuery<User>. call ``then`` to get results.
      */
     listUsers(page, size, filter = {}) {
-        console.log(this.currentUser);
         page = parseInt(page) || 0;
         size = parseInt(size) || 20;
 
