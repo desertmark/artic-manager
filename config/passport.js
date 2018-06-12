@@ -3,6 +3,7 @@ const userService = require('../users/user-service');
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 ExtractJwt = require('passport-jwt').ExtractJwt;
+const awilix = require('awilix');
 
 module.exports = (passport) => {
     const opts = {
@@ -36,5 +37,18 @@ module.exports = (passport) => {
             done(err, false);
         });
     }));
+    passport = defineAuthenticateJwt(passport);
     return passport;
+}
+
+
+// always register currentUser after authenticate middleware has already run. So req.user is available.
+function defineAuthenticateJwt(passport) {
+    passport.authenticateJwt = () => [passport.authenticate('jwt', {session: false}), registerCurrentUserMiddleware];
+    return passport;
+}
+
+function registerCurrentUserMiddleware(req, res, next) {   
+    req.container.register({currentUser: awilix.asValue(req.user)});
+    next();
 }

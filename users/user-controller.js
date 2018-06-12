@@ -1,6 +1,7 @@
 class UserController {
     constructor(opts) {
         this.userRepository = opts.userRepository;
+        this.getAll = this.getAll.bind(this);
     }
 
     getAll(req, res) {
