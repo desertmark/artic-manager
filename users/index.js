@@ -2,6 +2,8 @@ const router = require('express').Router();
 const userService = require('../users/user-service');
 const middlewares = require('./middlewares');
 const passport = require('passport');
+const awilixExpress = require('awilix-express');
+const UserController = require('./user-controller');
 
 function createRouter(container) {
     // This Endpoints are only available for Authenticated users.
@@ -16,8 +18,9 @@ function createRouter(container) {
             res.status(err.status || 500).json(err);
         });;
     });
-
-    router.get('/', (req, res) => req.container.resolve('userController').getAll(req,res));
+    
+    const controller = awilixExpress.makeInvoker(UserController);
+    router.get('/', controller('getAll'));
 
     router.post('/',  middlewares.isAdmin, (req, res) => {
         userService.createUser(req.body).then(user => {
@@ -30,7 +33,5 @@ function createRouter(container) {
     });
     return router;
 }
-
-
 
 module.exports = createRouter;
