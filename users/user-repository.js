@@ -1,6 +1,6 @@
 const User = require('./users');
 const bcrypt = require('bcryptjs');
-const authService = require('../auth/auth-service');
+const AuthService = require('../auth/auth-service');
 const _ = require('lodash');
 const roleEnum = require('./roles-enum');
 
@@ -58,7 +58,7 @@ class UserRepository {
                 message: 'Invalid User.'
             });
         }
-        return authService.hashPassword(user.password)
+        return AuthService.hashPassword(user.password)
         .then(passwordHash => {
             user.passwordHash = passwordHash;
             return _.pick(user, ['email', 'passwordHash','firstName', 'lastName', 'role']);

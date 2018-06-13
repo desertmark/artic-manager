@@ -1,11 +1,11 @@
 const config = require('../config/config.json');
-const userService = require('../users/user-service');
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 ExtractJwt = require('passport-jwt').ExtractJwt;
 const awilix = require('awilix');
 
-module.exports = (passport) => {
+module.exports = (passport, container) => {
+    const userService = container.resolve('userRepositoryTransient');
     const opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKeyProvider: (request, rawJwtToken, done) => {
@@ -22,8 +22,6 @@ module.exports = (passport) => {
                 }, null);
             });
         },
-    //    issuer: 'accounts.examplesoft.com',
-    //    audience: 'yoursite.net',
     }
     
     passport.use(new JwtStrategy(opts, (jwt_payload, done) => {

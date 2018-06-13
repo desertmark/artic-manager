@@ -1,6 +1,4 @@
-const router = require('express').Router();
-const userService = require('../users/user-service');
-const middlewares = require('./middlewares');
+const middlewares = require('./user-middlewares');
 const passport = require('passport');
 const awilixExpress = require('awilix-express');
 const UserController = require('./user-controller');
