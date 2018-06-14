@@ -1,8 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const Article = require('./articles.js');
-const service = require('./articles-service.js');
 const middlewares = require('./articles-middlewares');
+const awilix = require('awilix');
+const awilixExpress = require('awilix-express');
+const ArticlesController = require('./articles-controller');
+const ctrlBuilder = awilixExpress
+.createController(ArticlesController)
+.prefix('/articles')
+.get('/', 'get',{before: middlewares.parseFields})
+.get('/:id', 'getById')
+.post('/', 'post')
+.post('/search', 'postSearch',{before: middlewares.parseFields})
+.put('/:id', 'put')
+.delete('/:id', 'delete');
+
+const router = awilixExpress.controller(ctrlBuilder);
+router.param('id', middleware.findById);
+
 
 router.param('id', middlewares.findById);
 router.get('/', middlewares.parseFields, (req, res) => {
@@ -69,7 +81,5 @@ router.delete('/:id', (req,res) => {
         res.status(err.status).send(err);
     });
 });
-
-
 
 module.exports = router;
