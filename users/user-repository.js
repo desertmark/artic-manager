@@ -1,4 +1,3 @@
-const User = require('./users');
 const bcrypt = require('bcryptjs');
 const AuthService = require('../auth/auth-service');
 const _ = require('lodash');
@@ -7,6 +6,7 @@ const roleEnum = require('./roles-enum');
 class UserRepository {
     constructor(opts) {
         this.currentUser = opts.currentUser;
+        this.User = opts.User;
     }
     /**
      * Query Users table and paginates results.
@@ -27,7 +27,7 @@ class UserRepository {
         if(filter.firstName) queryFilter.firstName = { $regex: `.*${filter.firstName}.*` };
         if(filter.lastName) queryFilter.lastName = { $regex: `.*${filter.lastName}.*` };
 
-        const query = User
+        const query = this.User
         .find(queryFilter)
         .sort('email')
         .skip(page*size)
@@ -36,19 +36,19 @@ class UserRepository {
     }
 
     findById(id) {
-        return User
+        return this.User
         .findById(id)
         .catch(handleError);
     }
 
     findByEmail(email) {
-        return User
+        return this.User
         .findOne({email})
         .catch(handleError);
     }
 
     createUser(user) {
-        return factoryUser(user).then(userToStore => User.create(userToStore));
+        return factoryUser(user).then(userToStore => this.User.create(userToStore));
     }
 
     factoryUser(user) {
@@ -67,11 +67,11 @@ class UserRepository {
     }
 
     updateUser(id, fields) {
-        return User.findByIdAndUpdate(id,{$set:fields});
+        return this.User.findByIdAndUpdate(id,{$set:fields});
     }
 
     createOrUpdate(user) {
-        return User.findOneAndUpdate({email:user.email},{$set:user}, {upsert: true});
+        return this.User.findOneAndUpdate({email:user.email},{$set:user}, {upsert: true});
     }
 
 }

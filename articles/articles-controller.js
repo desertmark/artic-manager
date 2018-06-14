@@ -1,10 +1,16 @@
 class ArticlesController {
     constructor(opts) {
         this.articleRepository = opts.articleRepository;
+        this.get = this.get.bind(this);
+        this.getById = this.getById.bind(this);
+        this.post = this.post.bind(this);
+        this.postSearch = this.postSearch.bind(this);
+        this.put = this.put.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     get(req, res) {
-        service.listArticles(req.query.page, req.query.size, {}, res.locals.fields)
+        this.articleRepository.listArticles(req.query.page, req.query.size, {}, res.locals.fields)
         .then(articles => {
             console.log('GET: Articles', articles.length);
             res.send(articles);
@@ -20,7 +26,7 @@ class ArticlesController {
     }
     
     post(req,res) {
-        service.createArticle(req.body)
+        this.articleRepository.createArticle(req.body)
         .then(article => {
             console.log('POST: Articles', article);
             res.status(201).send(article);
@@ -32,7 +38,7 @@ class ArticlesController {
     }
     
     postSearch(req, res) {
-        service.listArticles(req.query.page, req.query.size, req.body, res.locals.fields)
+        this.articleRepository.listArticles(req.query.page, req.query.size, req.body, res.locals.fields)
         .then(articles => {
             console.log('GET: Articles', articles.length);
             res.send(articles);
@@ -45,7 +51,7 @@ class ArticlesController {
     
     put(req, res) {
         req.body.id = res.locals.article._id;
-        service.updateArticle(req.body)
+        this.articleRepository.updateArticle(req.body)
         .then(article => {
             console.log('PUT: Articles', article)
             res.send();
@@ -57,7 +63,7 @@ class ArticlesController {
     }
     
     delete(req,res) {
-        service.removeArticle(res.locals.article._id)
+        this.articleRepository.removeArticle(res.locals.article._id)
         .then(article => {
             console.log('DELETE: Article', article);
             res.send();

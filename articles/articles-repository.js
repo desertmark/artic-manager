@@ -1,8 +1,10 @@
-const Article = require('./articles');
-
 class ArticleRepository {
+    constructor(opts) {
+        this.Article = opts.Article;
+    }
+
     findById(id) {
-        return Article.findById(id);
+        return this.Article.findById(id);
     }
     
     /**
@@ -13,16 +15,16 @@ class ArticleRepository {
      * @param {Object | String} fields fields for the query to return. If not passed returns all of them. Pass it like ``{fieldName:1}`` or ``"fieldName1 fieldName2"``.
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
-    listArticles(page, pageSize, filter = {}, fields = null) {
+    listArticles(page, size, filter = {}, fields = null) {
         page = parseInt(page) || 0;
-        size = parseInt(pageSize) || 20;
+        size = parseInt(size) || 20;
     
         // optional filters: matching codes and/or partial description match
         let queryFilter = {};
         if(filter.code) queryFilter.code = { $eq: filter.code };
         if(filter.description) queryFilter.description = { $regex: `.*${filter.description}.*` };
     
-        const query = Article
+        const query = this.Article
         .find(queryFilter)
         .populate('category')
         .sort('description')
@@ -62,7 +64,7 @@ class ArticleRepository {
      * @param {*} article 
      */
     updateArticle(article) {
-        return Article.findByIdAndUpdate(article.id, { $set: article })
+        return this.Article.findByIdAndUpdate(article.id, { $set: article })
         .catch(err => {
             return {
                 status: 500,
@@ -77,7 +79,7 @@ class ArticleRepository {
      * @param {string} id
      */
     removeArticle(id) {
-        return Article.findByIdAndRemove(id)
+        return this.Article.findByIdAndRemove(id)
         .catch(err => {
             return {
                 status: 500,
