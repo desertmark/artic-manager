@@ -1,6 +1,7 @@
 class ArticlesController {
     constructor(opts) {
         this.articleRepository = opts.articleRepository;
+        this.articleService = opts.articleService;
         this.get = this.get.bind(this);
         this.getById = this.getById.bind(this);
         this.post = this.post.bind(this);
@@ -10,7 +11,7 @@ class ArticlesController {
     }
 
     get(req, res) {
-        this.articleRepository.listArticles(req.query.page, req.query.size, {}, res.locals.fields)
+        this.articleService.listArticles(req.query.page, req.query.size, {}, res.locals.fields)
         .then(articles => {
             console.log('GET: Articles', articles.length);
             res.send(articles);
