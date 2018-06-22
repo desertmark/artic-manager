@@ -18,28 +18,23 @@ class ArticleService {
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
     listArticles(page, size, filter = {}, fields = null) {
-        const query = this.articleRepository.listArticles(page, size, filter, fields);
-        query.select({
-            code:1,
-            description:1,
-            category:1
-        });
-        if(this.currentUser && this.currentUser.role === roleEnum.USER) {
-            query.select({
-                bonus:0,
-                bonus2:0,
-                cashDiscount:0,
-                cashDiscount2:0,
-                cost:0,
-                utility:0,
-                listPrice:0,
-                vat:0,
-                dolar:0,
-                transport:0,
-                card:0
-            });
+        const query = this.articleRepository.listArticles(page, size, filter);
+        // public fields
+        let allowedFields = null;
+        if (!fields || fields.code) allowedFields = { code: 1, ...allowedFields };
+        if (!fields || fields.description) allowedFields = { description: 1, ...allowedFields };
+
+        if(this.currentUser) {
+            if (this.currentUser.role === roleEnum.ADMIN) {
+                // Admin: all fields;
+                return fields ? query.select(fields) : query;
+            } else {
+                // User: public fields + price.
+                if (!fields || fields.price) allowedFields = { price: 1, ...allowedFields };
+            }
         }
-        return query;
+        // Anonymous, only public fields
+        return allowedFields ? query.select(allowedFields) : query.select({_id:1});
     }
     
     createArticle(articleJson) {

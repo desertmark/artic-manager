@@ -55,7 +55,7 @@ function customAuthenticateMiddleware(passport, role) {
             console.log('info', info);
             // if anonymous role was especified for the endpoint we let anybody pass.
             if(role === roleEnum.ANONYMOUS) {
-                req.container.register({currentUser: awilix.asValue(null)});
+                req.container.register({currentUser: awilix.asValue(user || null)});
                 return next();
             }
             //if user is not authenticated and no role or a role different than a anonymos is especified. 
@@ -63,6 +63,7 @@ function customAuthenticateMiddleware(passport, role) {
                 res.sendStatus(401);
             } else {
                 // user is authenticated
+                req.user = user;
                 req.container.register({currentUser: awilix.asValue(user)});
                 if(!role) {
                     // if no role was especified for this endpoint we let him pass.

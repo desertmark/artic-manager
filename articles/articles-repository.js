@@ -15,7 +15,7 @@ class ArticleRepository {
      * @param {Object | String} fields fields for the query to return. If not passed returns all of them. Pass it like ``{fieldName:1}`` or ``"fieldName1 fieldName2"``.
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
-    listArticles(page, size, filter = {}, fields = null) {
+    listArticles(page, size, filter = {}) {
         page = parseInt(page) || 0;
         size = parseInt(size) || 20;
     
@@ -30,10 +30,6 @@ class ArticleRepository {
         .sort('description')
         .skip(page*size)
         .limit(size)
-    
-        if(fields) {
-            query.select(fields);
-        }
         return query;
     }
     

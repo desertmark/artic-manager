@@ -48,7 +48,7 @@ class UserRepository {
     }
 
     createUser(user) {
-        return factoryUser(user).then(userToStore => this.User.create(userToStore));
+        return this.factoryUser(user).then(userToStore => this.User.create(userToStore));
     }
 
     factoryUser(user) {
