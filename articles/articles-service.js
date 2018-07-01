@@ -6,8 +6,20 @@ class ArticleService {
     }
 
     findById(id) {
-        return this.articleRepository.findById(id)
+        const query = this.articleRepository.findById(id)
         .select(this.getAllowedFields());
+        if(this.currentUser && this.currentUser.role === roleEnum.USER) {
+            return query.then(art => {
+                art = art.toObject({getters:true});
+                delete art.transport;
+                delete art.cost;
+                delete art.utility;
+                delete art.id;
+                return art;
+            });
+        } else {
+            return query;
+        }
     }
     
     /**
@@ -21,8 +33,19 @@ class ArticleService {
     listArticles(page, size, filter = {}, fields = null) {
         const query = this.articleRepository.listArticles(page, size, filter);
         const allowedFields = this.getAllowedFields(fields);
-        // Anonymous, only public fields
-        return query.select(allowedFields);
+        query.select(allowedFields);
+        if(this.currentUser && this.currentUser.role === roleEnum.USER) {
+            return query.then(articles => articles.map(art => {
+                art = art.toObject({getters:true});
+                delete art.transport;
+                delete art.cost;
+                delete art.utility;
+                delete art.id;
+                return art;
+            }));
+        } else {
+            return query;
+        }
     }
     
     createArticle(articleJson) {
@@ -100,10 +123,10 @@ class ArticleService {
             if (this.currentUser.role === roleEnum.ADMIN) {
                 // Admin: all fields;
                 return fields;
-            } // else {
-                // User: public fields + user level fields.
-                // if (!fields || fields.price) allowedFields = { price: 1, ...allowedFields };
-            //}
+            } else {
+                // User: public fields + user level fields. Price is virtual and dependes on cost, utility and transport
+                if (!fields || fields.price) allowedFields = { price: 1, cost:1, utility: 1, transport:1, ...allowedFields };
+            }
         }
         return allowedFields || {_id:1};
     }

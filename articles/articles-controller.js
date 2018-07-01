@@ -23,7 +23,7 @@ class ArticlesController {
     }
     
     getById(req,res) {
-        res.send(res.locals.article.toObject());
+        res.send(res.locals.article);
     }
     
     post(req,res) {
