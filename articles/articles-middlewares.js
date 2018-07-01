@@ -6,7 +6,8 @@ function findById(req ,res, next, id) {
     if (!isValidObjectId(id)) {
         return res.status(400).send('Invalid Id');
     }
-    articlesService.findById(id).then(article => {
+    const articleService = req.container.resolve('articleService');
+    articleService.findById(id).then(article => {
         if (article) {
             res.locals.article = article;
             next();

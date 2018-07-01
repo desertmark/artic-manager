@@ -8,7 +8,7 @@ const roleEnum = require('../users/roles-enum');
 const ctrlBuilder = awilixExpress
 .createController(ArticlesController)
 .prefix('/articles')
-.get('/', 'get',{before: [passport.authenticateJwt(roleEnum.ANONYMOUS), middlewares.parseFields]})
+.get('/', 'get',{before: [passport.authenticateJwt(roleEnum.ANONYMOUS),middlewares.parseFields]})
 .get('/:id', 'getById')
 .post('/', 'post')
 .post('/search', 'postSearch',{before: middlewares.parseFields})
@@ -16,6 +16,7 @@ const ctrlBuilder = awilixExpress
 .delete('/:id', 'delete');
 
 const router = awilixExpress.controller(ctrlBuilder);
+router.param('id', passport.authenticateJwt(roleEnum.ANONYMOUS));
 router.param('id', middlewares.findById);
 
 module.exports = router;

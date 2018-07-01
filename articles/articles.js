@@ -6,7 +6,6 @@ mongoose.connect(config.dbConnection);
 const Article = mongoose.model('Article', new Schema({
     code:String,
     description:String,
-    price:Number,
     bonus:Number,
     bonus2:Number,
     cashDiscount:Number,

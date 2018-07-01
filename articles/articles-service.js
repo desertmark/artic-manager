@@ -6,7 +6,8 @@ class ArticleService {
     }
 
     findById(id) {
-
+        return this.articleRepository.findById(id)
+        .select(this.getAllowedFields());
     }
     
     /**
@@ -19,26 +20,23 @@ class ArticleService {
      */
     listArticles(page, size, filter = {}, fields = null) {
         const query = this.articleRepository.listArticles(page, size, filter);
-        // public fields
-        let allowedFields = null;
-        if (!fields || fields.code) allowedFields = { code: 1, ...allowedFields };
-        if (!fields || fields.description) allowedFields = { description: 1, ...allowedFields };
-
-        if(this.currentUser) {
-            if (this.currentUser.role === roleEnum.ADMIN) {
-                // Admin: all fields;
-                return fields ? query.select(fields) : query;
-            } else {
-                // User: public fields + price.
-                if (!fields || fields.price) allowedFields = { price: 1, ...allowedFields };
-            }
-        }
+        const allowedFields = this.getAllowedFields(fields);
         // Anonymous, only public fields
-        return allowedFields ? query.select(allowedFields) : query.select({_id:1});
+        return query.select(allowedFields);
     }
     
     createArticle(articleJson) {
-
+        let article;
+        article = this.articleFactory(articleJson);
+        if(article) {
+            return this.articleRepository.createArticle(article)
+        } else {
+            return Promise.reject({
+                status: 400,
+                message: 'Invalid Article',
+                error: Error('Invalid Article')
+            });
+        }
     }
     
     /**
@@ -46,7 +44,7 @@ class ArticleService {
      * @param {*} article 
      */
     updateArticle(article) {
-
+        return this.articleRepository.updateArticle(article);
     }
     
     /**
@@ -54,7 +52,7 @@ class ArticleService {
      * @param {string} id
      */
     removeArticle(id) {
-
+        return this.articleRepository.removeArticle(id);
     }
     
     /**
@@ -66,7 +64,6 @@ class ArticleService {
         return article.code &&
             article.description &&
             article.cost > 0 &&
-            article.listPrice > 0 &&
             article.dolar > 0 && 
             article.utility > 0 &&
             article.categoryId !== undefined;
@@ -77,7 +74,7 @@ class ArticleService {
      * @param {*} model A raw object with all mandatory properties set.
      */
     articleFactory(model) {
-        if(!isValid(model)) {
+        if(!this.isValid(model)) {
             console.error('articleFactory: Article is not valid.', model);
             return null;
         }
@@ -88,8 +85,27 @@ class ArticleService {
         model.bonus2          = model.bonus2 || 0
         model.cashDiscount    = model.cashDiscount || 0;
         model.cashDiscount2   = model.cashDiscount2 || 0;
-        model.price = model.listPrice + model.listPrice*(-model.bonus/100 -model.bonus2/100 -model.cashDiscount/100 -model.cashDiscount2/100 + model.vat/100 + model.transport/100 + model.utility/100);
+        model.dolar           = model.dolar || 0;
+        // model.price = model.listPrice + model.listPrice*(-model.bonus/100 -model.bonus2/100 -model.cashDiscount/100 -model.cashDiscount2/100 + model.vat/100 + model.transport/100 + model.utility/100);
         return model;
+    }
+
+    getAllowedFields(fields) {
+        // public fields
+        let allowedFields = null;
+        if (!fields || fields.code) allowedFields = { code: 1, ...allowedFields };
+        if (!fields || fields.description) allowedFields = { description: 1, ...allowedFields };
+
+        if(this.currentUser) {
+            if (this.currentUser.role === roleEnum.ADMIN) {
+                // Admin: all fields;
+                return fields;
+            } // else {
+                // User: public fields + user level fields.
+                // if (!fields || fields.price) allowedFields = { price: 1, ...allowedFields };
+            //}
+        }
+        return allowedFields || {_id:1};
     }
 }
 

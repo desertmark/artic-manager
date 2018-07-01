@@ -27,7 +27,7 @@ class ArticlesController {
     }
     
     post(req,res) {
-        this.articleRepository.createArticle(req.body)
+        this.articleService.createArticle(req.body)
         .then(article => {
             console.log('POST: Articles', article);
             res.status(201).send(article);
@@ -39,7 +39,7 @@ class ArticlesController {
     }
     
     postSearch(req, res) {
-        this.articleRepository.listArticles(req.query.page, req.query.size, req.body, res.locals.fields)
+        this.articleService.listArticles(req.query.page, req.query.size, req.body, res.locals.fields)
         .then(articles => {
             console.log('GET: Articles', articles.length);
             res.send(articles);
@@ -52,7 +52,7 @@ class ArticlesController {
     
     put(req, res) {
         req.body.id = res.locals.article._id;
-        this.articleRepository.updateArticle(req.body)
+        this.articleService.updateArticle(req.body)
         .then(article => {
             console.log('PUT: Articles', article)
             res.send();
@@ -63,8 +63,8 @@ class ArticlesController {
         });
     }
     
-    delete(req,res) {
-        this.articleRepository.removeArticle(res.locals.article._id)
+    delete(req, res) {
+        this.articleService.removeArticle(res.locals.article._id)
         .then(article => {
             console.log('DELETE: Article', article);
             res.send();
