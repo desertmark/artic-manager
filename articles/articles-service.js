@@ -1,25 +1,18 @@
 const roleEnum = require('../users/roles-enum');
+const _ = require('lodash');
 class ArticleService {
     constructor(opts) {
         this.currentUser = opts.currentUser;
         this.articleRepository = opts.articleRepository;
+        this.anonymouseAllowedFields = ["_id", "code", "category", "description"];
+        this.userAllowedFields = ["_id", "code", "category", "description", "price"];
     }
 
     findById(id) {
-        const query = this.articleRepository.findById(id)
-        .select(this.getAllowedFields());
-        if(this.currentUser && this.currentUser.role === roleEnum.USER) {
-            return query.then(art => {
-                art = art.toObject({getters:true});
-                delete art.transport;
-                delete art.cost;
-                delete art.utility;
-                delete art.id;
-                return art;
-            });
-        } else {
-            return query;
-        }
+        return this.articleRepository.findById(id).then(article => {
+            let fieldsToPick = this.getAllowedFields(null);
+            return fieldsToPick ? _.pick(article, fieldsToPick) : article;
+        });
     }
     
     /**
@@ -31,21 +24,10 @@ class ArticleService {
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
     listArticles(page, size, filter = {}, fields = null) {
-        const query = this.articleRepository.listArticles(page, size, filter);
-        const allowedFields = this.getAllowedFields(fields);
-        query.select(allowedFields);
-        if(this.currentUser && this.currentUser.role === roleEnum.USER) {
-            return query.then(articles => articles.map(art => {
-                art = art.toObject({getters:true});
-                delete art.transport;
-                delete art.cost;
-                delete art.utility;
-                delete art.id;
-                return art;
-            }));
-        } else {
-            return query;
-        }
+        return this.articleRepository.listArticles(page, size, filter).then(articles => {
+            let fieldsToPick= this.getAllowedFields(fields);
+            return fieldsToPick ? articles.map(art => _.pick(art, fieldsToPick)) : articles;
+        });
     }
     
     createArticle(articleJson) {
@@ -114,21 +96,16 @@ class ArticleService {
     }
 
     getAllowedFields(fields) {
-        // public fields
-        let allowedFields = null;
-        if (!fields || fields.code) allowedFields = { code: 1, ...allowedFields };
-        if (!fields || fields.description) allowedFields = { description: 1, ...allowedFields };
-
-        if(this.currentUser) {
-            if (this.currentUser.role === roleEnum.ADMIN) {
-                // Admin: all fields;
-                return fields;
-            } else {
-                // User: public fields + user level fields. Price is virtual and dependes on cost, utility and transport
-                if (!fields || fields.price) allowedFields = { price: 1, cost:1, utility: 1, transport:1, ...allowedFields };
+        let fieldsToPick;
+        if(!this.currentUser) {
+            return fieldsToPick = fields ? _.intersection(this.anonymouseAllowedFields, fields) : this.anonymouseAllowedFields;
+        } else {
+            if(this.currentUser.role === roleEnum.USER) {
+                return fieldsToPick = fields ? _.intersection(this.userAllowedFields, fields) : this.userAllowedFields;
             }
         }
-        return allowedFields || {_id:1};
+        fieldsToPick = fields;
+        return fieldsToPick;
     }
 }
 

@@ -28,7 +28,7 @@ function findById(req ,res, next, id) {
     });
 }
 
-function parseFields(req, res, next) {
+function parseFieldsToObject(req, res, next) {
     if(req.query && req.query.fields) {
         const fieldsArray = req.query.fields.split(",");
         let fields = {};
@@ -40,7 +40,15 @@ function parseFields(req, res, next) {
     next();
 }
 
+function parseFieldsToArray(req, res, next) {
+    if(req.query && req.query.fields) {
+        res.locals.fields = req.query.fields.split(",");
+    }
+    next();
+}
+
 module.exports = {
     findById,
-    parseFields
+    parseFieldsToObject,
+    parseFieldsToArray
 };

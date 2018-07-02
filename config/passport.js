@@ -50,9 +50,6 @@ function defineAuthenticateJwt(passport) {
 function customAuthenticateMiddleware(passport, role) {
     return (req, res, next) => {
         passport.authenticate('jwt', {session: false, }, (err, user, info) => {
-            console.log('err', err);
-            console.log('user', user);
-            console.log('info', info);
             // if anonymous role was especified for the endpoint we let anybody pass.
             if(role === roleEnum.ANONYMOUS) {
                 req.container.register({currentUser: awilix.asValue(user || null)});
