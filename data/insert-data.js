@@ -1,4 +1,4 @@
-var   articles = require('./sanita.json');
+var   articlesJSON = require('./sanita.json');
 const Article = require('../articles/articles');
 const Category = require('../categories/categories');
 const _ = require('lodash');
@@ -59,6 +59,7 @@ function handleError(error) {
 }
 
 function insertAll() {
+    const articles = mapArticlesJSONToArticlesModel(articlesJSON);
     return createAndInsertCategories(articles)
     .then(insertedCategories => {
         return createAndInsertArticles(articles, insertedCategories)
@@ -145,4 +146,31 @@ function mapCategoryDescriptionToCategoryId(articles, categories) {
         return art;
     });
     return mappedArticles;
+}
+
+function mapArticlesJSONToArticlesModel(articlesJSON) {
+    return articlesJSON.map(art => {
+        art.card = art.card/100;
+        art.transport = art.transport/100;
+        art.utility = +(art.utility - 1).toFixed(2);
+        art.discounts = [
+            {
+                description:'Boninifcacion',
+                amount: art.bonus/100
+            },
+            {
+                description:'Boninifcacion 2',
+                amount: art.bonus2/100
+            },
+            {
+                description:'Descuento de caja',
+                amount: art.cashDiscount/100
+            },
+            {
+                description:'Descuento de caja 2',
+                amount: art.cashDiscount2/100
+            }
+        ];
+        return art;
+    });
 }
