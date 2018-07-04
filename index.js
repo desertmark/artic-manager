@@ -1,4 +1,4 @@
-const PORT_NUMBER       = prcoess.env.PORT || 3000 ; 
+const PORT_NUMBER       = process.env.PORT || 3000 ; 
 const info              = `App is running on port: ${PORT_NUMBER}`;
 const app               = require('express')();
 const passport          = require('passport');
