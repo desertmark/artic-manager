@@ -5,7 +5,7 @@ class ArticleService {
         this.currentUser = opts.currentUser;
         this.articleRepository = opts.articleRepository;
         this.anonymouseAllowedFields = ["_id", "code", "category", "description"];
-        this.userAllowedFields = ["_id", "code", "category", "description", "price"];
+        this.userAllowedFields = ["_id", "code", "category", "description", "price", "cardPrice"];
     }
 
     findById(id) {

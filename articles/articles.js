@@ -34,7 +34,11 @@ articleSchema.virtual('price').get(function() {
     const totalDiscount = _.sumBy(this.discounts, 'amount');
     const price = this.listPrice*(1 + this.utility + this.transport - totalDiscount).toFixed(2);
     return parseFloat(price);
-})
+});
+
+articleSchema.virtual('cardPrice').get(function() {
+    return this.price*(1+this.card);
+});
 
 const Article = mongoose.model('Article', articleSchema);
 
