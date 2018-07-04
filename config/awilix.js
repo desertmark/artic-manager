@@ -1,23 +1,21 @@
-const path                  = require('path');
-const using = (filePath) => require(path.join(__dirname, filePath));
 const awilix                = require('awilix');
 
-const User                  = using('../users/users');
-const UserRepository        = using('../users/user-repository');
-const UserController        = using('../users/user-controller');
+const User                  = require('../users/users');
+const UserRepository        = require('../users/user-repository');
+const UserController        = require('../users/user-controller');
 
-const AuthService           = using('../auth/auth-service');
-const AuthController        = using('../auth/auth-controller');
+const AuthService           = require('../auth/auth-service');
+const AuthController        = require('../auth/auth-controller');
 
-const Article               = using('../articles/articles');
-const ArticleRepository     = using('../articles/articles-Repository');
-const ArticleService        = using('../articles/articles-service');
-const ArticleController     = using('../articles/articles-controller');
+const Article               = require('../articles/articles');
+const ArticleRepository     = require('../articles/articles-repository');
+const ArticleService        = require('../articles/articles-service');
+const ArticleController     = require('../articles/articles-controller');
 
 
-const Category              = using('../categories/categories');
-const CategoriesRepository  = using('../categories/categories-repository');
-const CategoriesController  = using('../categories/categories-controller');
+const Category              = require('../categories/categories');
+const CategoriesRepository  = require('../categories/categories-repository');
+const CategoriesController  = require('../categories/categories-controller');
 
 function getContainer() {
     const container = awilix.createContainer({
