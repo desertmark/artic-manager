@@ -1,4 +1,4 @@
 {
     "secret":"e4ec86f1e47a3120cf57fdd1db9610d61b87b8b389ca946e9a052177e624e9ca18873dc54fb25905b5fb9597071c0f3ad0b09af27ea6f426a52908b4bbe67490",
-    "dbConnection": "mongodb+srv://fgasulay:33730289@cluster0-gtxvt.mongodb.net/test?retryWrites=true"
+    "dbConnection": "mongodb+srv://fgasulay:fernando.64@cluster0-gtxvt.mongodb.net/test"
 }
