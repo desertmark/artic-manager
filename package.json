@@ -4,8 +4,8 @@
   "description": "Articles Manager REST API",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js",
-    "start:w": "nodemon ./index.js",
+    "start": "node index.js",
+    "start:w": "nodemon index.js",
     "localdb": "mongod --dbpath %MONGO_DB_PATH%",
     "bulk": "node ./data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
