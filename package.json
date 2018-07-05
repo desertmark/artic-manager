@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Articles Manager REST API",
   "main": "index.js",
+  "engine": {"node":"8.11.3"},
   "scripts": {
     "start": "node ./index.js",
     "start:w": "nodemon ./index.js",

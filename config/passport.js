@@ -1,4 +1,4 @@
-const config = require('../config/config.json');
+const config = require('../config/config.js');
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 ExtractJwt = require('passport-jwt').ExtractJwt;
