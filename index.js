@@ -24,7 +24,7 @@ app.use(awilixExpress.loadControllers('**/*-router.js'))
 const articlesRouter = require('./articles');
 app.use('/', articlesRouter); // Loading articles router separately because it uses router.param which is not expose by awilix's createController wrapper.
 
-app.get('/info', (req, res) => res.send({info, config}));
+app.get('/info', (req, res) => res.send(info));
 app.listen(PORT_NUMBER, () => console.log(info));
 
 
