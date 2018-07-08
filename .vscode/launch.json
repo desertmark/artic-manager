@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "InsertAll",
-            "program": "${workspaceFolder}/data/insert-data.js",
+            "program": "${workspaceFolder}/src/data/insert-data.js",
             "args": [
                 "-action",
                 "insertAll"
@@ -19,7 +19,7 @@
             "request": "launch",
             "name": "Api (Autoreload)",
             "runtimeExecutable": "nodemon",
-            "program": "${workspaceFolder}/index.js",
+            "program": "${workspaceFolder}/src/index.js",
             "restart": true,
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"

@@ -3,15 +3,17 @@
   "version": "0.0.1",
   "description": "Articles Manager REST API",
   "main": "index.js",
-  "engine": {"node":"8.11.3"},
+  "engine": {
+    "node": "8.11.3"
+  },
   "scripts": {
-    "start": "node ./index.js",
-    "start:w": "nodemon ./index.js",
+    "start": "node ./src/index.js",
+    "start:w": "nodemon ./src/index.js",
     "localdb": "mongod --dbpath %MONGO_DB_PATH%",
-    "bulk": "node ./data/insert-data.js",
+    "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine --config=./jasmine.json"
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "jasmine": "^3.1.0",
     "nodemon": "^1.17.5"
   }
 }
