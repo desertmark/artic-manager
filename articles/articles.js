@@ -15,7 +15,6 @@ const articleSchema = new Schema({
     code:String,
     description:String,
     discounts: [discountSchema],
-    cost:Number,
     utility:Number,
     listPrice:Number,
     vat:Number,

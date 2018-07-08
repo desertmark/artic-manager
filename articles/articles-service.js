@@ -66,12 +66,12 @@ class ArticleService {
      * @returns {Boolean} Boolean
      */
     isValid(article) {
-        return article.code &&
-            article.description &&
-            article.cost > 0 &&
-            article.dolar > 0 && 
-            article.utility > 0 &&
-            article.categoryId !== undefined;
+        return article.code         &&
+            article.description     &&
+            article.listPrice   > 0 &&
+            article.dolar       > 0 && 
+            article.utility     > 0 &&
+            article.categoryId  !== undefined;
     }
     
     /**
@@ -83,14 +83,11 @@ class ArticleService {
             console.error('articleFactory: Article is not valid.', model);
             return null;
         }
-        model.card            = model.card || 23;
-        model.transport       = model.transport || 14;
-        model.vat             = model.vat || 21;
-        model.bonus           = model.bonus || 0
-        model.bonus2          = model.bonus2 || 0
-        model.cashDiscount    = model.cashDiscount || 0;
-        model.cashDiscount2   = model.cashDiscount2 || 0;
-        model.dolar           = model.dolar || 0;
+        model.card      = model.card || 0.23;
+        model.transport = model.transport || 0.14;
+        model.vat       = model.vat || 0.21;
+        model.discounts = model.discounts || [];
+        model.dolar     = model.dolar || 0;
         // model.price = model.listPrice + model.listPrice*(-model.bonus/100 -model.bonus2/100 -model.cashDiscount/100 -model.cashDiscount2/100 + model.vat/100 + model.transport/100 + model.utility/100);
         return model;
     }

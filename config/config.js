@@ -1,6 +1,15 @@
-const config = require('./config.json');
+const env = (process.env.NODE_ENV || 'DEV').toLowerCase();
+const config = require(`./config.${env}.json`);
 
-module.exports = {
-    dbConnection: process.env.DATABASE_URL || config.dbConnection,
-    secret: config.secret
-}
+// switch (process.env.NODE_ENV) {
+//     case 'Production':
+//     break;
+//     case 'QA':
+//     break;
+//     case 'DEV':
+//     break;
+//     default:
+//     break;
+// }
+
+module.exports = config;

@@ -1,13 +1,17 @@
-const PORT_NUMBER       = process.env.PORT || 3000 ; 
-const info              = `App is running on port: ${PORT_NUMBER}`;
+const PORT_NUMBER       = process.env.PORT || 3000 ;
+const config            = require('./config/config.js');
 const app               = require('express')();
 const passport          = require('passport');
 const configurePassport = require('./config/passport');
 const awilixConfig      = require('./config/awilix');
 const awilixExpress     = require('awilix-express');
 const bodyParser        = require('body-parser');
-const config            = require('./config/config.json');
 require('./data/seed-data')();
+
+const info = {
+    status: `App is running on port: ${PORT_NUMBER}`,
+    env: config.env
+}
 
 app.use(bodyParser.json());
 
@@ -23,8 +27,9 @@ app.use(passport.session());
 app.use(awilixExpress.loadControllers('**/*-router.js'))
 const articlesRouter = require('./articles');
 app.use('/', articlesRouter); // Loading articles router separately because it uses router.param which is not expose by awilix's createController wrapper.
-
 app.get('/info', (req, res) => res.send(info));
+
+//START
 app.listen(PORT_NUMBER, () => console.log(info));
 
 

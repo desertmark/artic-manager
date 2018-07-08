@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const config = require('../config/config.json');
+const config = require('../config/config.js');
 const jwt = require('jsonwebtoken');
 
 class AuthService {
