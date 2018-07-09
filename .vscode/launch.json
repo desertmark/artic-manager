@@ -23,6 +23,16 @@
             "restart": true,
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "test",
+            "runtimeExecutable": "jasmine",
+            "runtimeArgs": [
+                "--config=./jasmine.json"
+            ],
+            "port": 9229
         }
     ]
 }
