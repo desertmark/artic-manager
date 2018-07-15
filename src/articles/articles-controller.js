@@ -76,6 +76,20 @@ class ArticlesController {
         });
     }
 
+    putByFile(req, res) {
+        const csv = require('csvtojson');
+        const fs = require('fs');
+        req.files.foto.mv('./test.txt').then(() => {
+            
+            csv({delimiter:';'})
+            .fromFile('./test.txt')
+            .then(json => {
+                res.send(json);
+            })
+        })
+
+    }
+
     delete(req, res) {
         this.articleService.removeArticle(res.locals.article._id)
         .then(article => {

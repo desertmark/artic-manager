@@ -14,6 +14,7 @@ const ctrlBuilder = awilixExpress
 .post('/search', 'postSearch',{before: middlewares.parseFields})
 .put('/','putByCodeRange')
 .put('/:id', 'put')
+.put('/', 'putByFile')
 .delete('/:id', 'delete');
 
 const router = awilixExpress.controller(ctrlBuilder);
