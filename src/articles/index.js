@@ -12,6 +12,7 @@ const ctrlBuilder = awilixExpress
 .get('/:id', 'getById')
 .post('/', 'post')
 .post('/search', 'postSearch',{before: middlewares.parseFields})
+.put('/','putByCodeRange')
 .put('/:id', 'put')
 .delete('/:id', 'delete');
 

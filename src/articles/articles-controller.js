@@ -63,6 +63,19 @@ class ArticlesController {
         });
     }
     
+    putByCodeRange(req,res) {
+        const form = req.body;
+        this.articleService.updateByCodeRange(form)
+        .then(articles => {
+            console.log('PUT: Articles By Code Range', articles);
+            res.send(articles);
+        })
+        .catch(err => {
+            console.error('PUT: Articles By Code Range', err);
+            res.status(err.status).send(err.toObject());
+        });
+    }
+
     delete(req, res) {
         this.articleService.removeArticle(res.locals.article._id)
         .then(article => {

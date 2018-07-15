@@ -1,5 +1,6 @@
 const roleEnum = require('../users/roles-enum');
 const _ = require('lodash');
+const BusinessError = require('../util/errors').BusinessError;
 class ArticleService {
     constructor(opts) {
         this.currentUser = opts.currentUser;
@@ -36,20 +37,40 @@ class ArticleService {
         if(article) {
             return this.articleRepository.createArticle(article)
         } else {
-            return Promise.reject({
-                status: 400,
-                message: 'Invalid Article',
-                error: Error('Invalid Article')
-            });
+            return Promise.reject(new BusinessError('Invalid Article'));
         }
     }
     
     /**
-     * Performs a partial article of the given fields. If succeeded returns the updated article.
+     * Performs a partial update of the given fields. If succeeded returns the updated article.
      * @param {*} article 
      */
     updateArticle(article) {
         return this.articleRepository.updateArticle(article);
+    }
+
+    /**
+     * updates those article's fields which codes are between the code range indicated by the model.
+     * Expects: `
+     * {
+     *  from: string,
+     *  to: string,
+     *  fields: {
+     *      [string]: string
+     *  }
+     * }
+     * `
+     * @param {*} model 
+     */
+    updateByCodeRange(model) {
+        if(!this.isCodeRangeModelValid(model)) {
+            return Promise.reject(new BusinessError('Invalid Model. Please specify from, to and what fields to update along with the values.'))
+        }
+        const codeFrom = model.from;
+        const codeTo = model.to;
+        const filter = {code:{$gte: codeFrom,$lte: codeTo}};
+        const query = {$set: model.fields};
+        return this.articleRepository.updateMany(filter, query, {upsert: false});
     }
     
     /**
@@ -103,6 +124,24 @@ class ArticleService {
         }
         fieldsToPick = fields;
         return fieldsToPick;
+    }
+
+    /**
+     * Parses formated code like "00.00.00.00" to its integer form.
+     * @param {String} code 
+     */
+    parseCodeToInt(code) {
+        return parseInt(code.replace(/[.]/g,''));
+    }
+
+    /**
+     * Checks if the given model is a valid model to perform a bulk updateByCodeRange.
+     * @param {*} model 
+     */
+    isCodeRangeModelValid(model) {
+        return  typeof model.from === "number" &&
+                typeof model.to   === "number" && 
+                model.fields
     }
 }
 
