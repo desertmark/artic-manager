@@ -79,7 +79,6 @@ class ArticlesController {
                 csv({delimiter:';'})
                 .fromFile(filePath)
                 .then(json => {
-                    res.send(json);
                     fs.unlink(filePath);
                 })
             })
