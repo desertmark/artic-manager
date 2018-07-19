@@ -63,6 +63,33 @@ class ArticlesController {
         });
     }
     
+    putByCodeRange(req,res) {
+        const form = req.body;
+        this.articleService.updateByCodeRange(form)
+        .then(articles => {
+            console.log('PUT: Articles By Code Range', articles);
+            res.send(articles);
+        })
+        .catch(err => {
+            console.error('PUT: Articles By Code Range', err);
+            res.status(err.status).send(err.toObject());
+        });
+    }
+
+    putByFile(req, res) {
+        const csv = require('csvtojson');
+        const fs = require('fs');
+        req.files.foto.mv('./test.txt').then(() => {
+            
+            csv({delimiter:';'})
+            .fromFile('./test.txt')
+            .then(json => {
+                res.send(json);
+            })
+        })
+
+    }
+
     delete(req, res) {
         this.articleService.removeArticle(res.locals.article._id)
         .then(article => {

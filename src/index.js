@@ -6,6 +6,7 @@ const configurePassport = require('./config/passport');
 const awilixConfig      = require('./config/awilix');
 const awilixExpress     = require('awilix-express');
 const bodyParser        = require('body-parser');
+const fileUpload        = require('express-fileupload');
 require('./data/seed-data')();
 
 const info = {
@@ -14,7 +15,7 @@ const info = {
 }
 
 app.use(bodyParser.json());
-
+app.use(fileUpload());
 // AWILIX
 const container = awilixConfig.getContainer();
 app.use(awilixConfig.scopeContainer(container));

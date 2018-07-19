@@ -152,6 +152,7 @@ function mapArticlesJSONToArticlesModel(articlesJSON) {
     return articlesJSON.map(art => {
         delete art.price;
         delete art.cost;
+        art.code = parseInt(art.code.replace(/[.]/g,''));
         art.card = art.card/100;
         art.transport = art.transport/100;
         art.utility = +(art.utility - 1).toFixed(2);

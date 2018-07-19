@@ -4,7 +4,7 @@ const isValidObjectId = mongodb.ObjectID.isValid;
 
 function findById(req ,res, next, id) {
     if (!isValidObjectId(id)) {
-        return res.status(400).send('Invalid Id');
+        return res.status(400).send('Invalid Mongo Id');
     }
     const articleService = req.container.resolve('articleService');
     articleService.findById(id).then(article => {

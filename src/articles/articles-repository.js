@@ -1,3 +1,4 @@
+const MongooseError = require('../util/errors').MongooseError;
 class ArticleRepository {
     constructor(opts) {
         this.Article = opts.Article;
@@ -36,13 +37,7 @@ class ArticleRepository {
     createArticle(article) {
         return this.Article
         .create(article)
-        .catch(error => {
-            return {
-                status: 500,
-                message:'Mongoose Error',
-                error
-            }
-        });
+        .catch(err => new MongooseError(err));
     }
     
     
@@ -52,28 +47,21 @@ class ArticleRepository {
      */
     updateArticle(article) {
         return this.Article.findByIdAndUpdate(article.id, { $set: article })
-        .catch(err => {
-            return {
-                status: 500,
-                message:'Mongoose Error',
-                error
-            }
-        });
+        .catch(err => new MongooseError(err));
     }
     
+    updateMany(filter, query) {
+        return this.Article.updateMany(filter, query, {upsert: false})
+        .catch(err => new MongooseError(err));
+    }
+
     /**
      * Removes the article with the given id from the database.
      * @param {string} id
      */
     removeArticle(id) {
         return this.Article.findByIdAndRemove(id)
-        .catch(err => {
-            return {
-                status: 500,
-                message:'Mongoose Error',
-                error
-            }
-        });
+        .catch(err => new MongooseError(err));
     }
 }
 
