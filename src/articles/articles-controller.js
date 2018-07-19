@@ -1,3 +1,9 @@
+const UpdateByCodeRangeModel = require('./models/updateByCodeRangeModel');
+const csv = require('csvtojson');
+const fs = require('fs');
+const config = require('../config/config');
+const path = require('path');
+const uuidv4  = require('uuid/v4');
 class ArticlesController {
     constructor(opts) {
         this.articleRepository = opts.articleRepository;
@@ -50,7 +56,7 @@ class ArticlesController {
         });
     }
     
-    put(req, res) {
+    putById(req, res) {
         req.body.id = res.locals.article._id;
         this.articleService.updateArticle(req.body)
         .then(article => {
@@ -63,24 +69,48 @@ class ArticlesController {
         });
     }
     
+    put(req, res) {
+        const bulkFile = req.files ? req.files.bulk : null;
+        if(bulkFile) {
+            // updateByFile
+            const filePath = path.join(config.publicPath, `${uuidv4()}.csv`);
+            bulkFile.mv(filePath)
+            .then(() => {
+                csv({delimiter:';'})
+                .fromFile(filePath)
+                .then(json => {
+                    res.send(json);
+                    fs.unlink(filePath);
+                })
+            })
+            .catch(err => {
+                res.status(500).send(err);
+            });
+            return;
+        }
+        const model = new UpdateByCodeRangeModel(req.body);
+        if(model.isValid()) {
+            // update by code range
+            this.articleService.updateByCodeRange(model)
+            .then(articles => {
+                console.log('PUT: Articles By Code Range', articles);
+                res.send(articles);
+            })
+            .catch(err => {
+                console.error('PUT: Articles By Code Range', err);
+                res.status(err.status).send(err.toObject());
+            });
+            return;
+        }
+        res.sendStatus(400);       
+    }
+
     putByCodeRange(req,res) {
-        const form = req.body;
-        this.articleService.updateByCodeRange(form)
-        .then(articles => {
-            console.log('PUT: Articles By Code Range', articles);
-            res.send(articles);
-        })
-        .catch(err => {
-            console.error('PUT: Articles By Code Range', err);
-            res.status(err.status).send(err.toObject());
-        });
+
     }
 
     putByFile(req, res) {
-        const csv = require('csvtojson');
-        const fs = require('fs');
         req.files.foto.mv('./test.txt').then(() => {
-            
             csv({delimiter:';'})
             .fromFile('./test.txt')
             .then(json => {
