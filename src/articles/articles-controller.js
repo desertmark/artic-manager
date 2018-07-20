@@ -6,14 +6,15 @@ const path = require('path');
 const uuidv4  = require('uuid/v4');
 class ArticlesController {
     constructor(opts) {
-        this.articleRepository = opts.articleRepository;
         this.articleService = opts.articleService;
-        this.get = this.get.bind(this);
-        this.getById = this.getById.bind(this);
-        this.post = this.post.bind(this);
+        this.fileService = opts.fileService;
+
+        this.get        = this.get.bind(this);
+        this.getById    = this.getById.bind(this);
+        this.post       = this.post.bind(this);
         this.postSearch = this.postSearch.bind(this);
-        this.put = this.put.bind(this);
-        this.delete = this.delete.bind(this);
+        this.put        = this.put.bind(this);
+        this.delete     = this.delete.bind(this);
     }
 
     get(req, res) {
@@ -72,19 +73,12 @@ class ArticlesController {
     put(req, res) {
         const bulkFile = req.files ? req.files.bulk : null;
         if(bulkFile) {
-            // updateByFile
-            const filePath = path.join(config.publicPath, `${uuidv4()}.csv`);
-            bulkFile.mv(filePath)
-            .then(() => {
-                csv({delimiter:';'})
-                .fromFile(filePath)
-                .then(json => {
-                    fs.unlink(filePath);
-                })
+            this.fileService.csvToJson(bulkFile).then(json =>{
+                res.send(json);
             })
             .catch(err => {
-                res.status(500).send(err);
-            });
+                 res.status(500).send(err);
+             });
             return;
         }
         const model = new UpdateByCodeRangeModel(req.body);

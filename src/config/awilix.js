@@ -12,10 +12,11 @@ const ArticleRepository     = require('../articles/articles-repository');
 const ArticleService        = require('../articles/articles-service');
 const ArticleController     = require('../articles/articles-controller');
 
-
 const Category              = require('../categories/categories');
 const CategoriesRepository  = require('../categories/categories-repository');
 const CategoriesController  = require('../categories/categories-controller');
+
+const FileService           = require('../files/file-service');
 
 function getContainer() {
     const container = awilix.createContainer({
@@ -41,6 +42,8 @@ function getContainer() {
         Category:               awilix.asValue(Category),
         categoriesRepository:   awilix.asClass(CategoriesRepository).scoped(),
         categoriesController:   awilix.asClass(CategoriesController).scoped(),
+
+        fileService:            awilix.asClass(FileService).scoped()
     });
     return container;
 }
