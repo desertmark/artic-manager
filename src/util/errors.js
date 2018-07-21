@@ -27,5 +27,12 @@ class MongooseError extends BusinessError {
     }
 }
 
+class InternalServerError extends Error {
+    constructor(message, error = null){
+        super(message, 500, error);
+    }
+}
+
 module.exports.BusinessError = BusinessError;
 module.exports.MongooseError = MongooseError;
+module.exports.InternalServerError = InternalServerError;

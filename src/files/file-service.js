@@ -8,14 +8,20 @@ class FileService {
     constructor() {
         this.csvOptions =  {delimiter:';'}
 
-        this.parseCsv = this.parseCsv.bind(this);
+        this.parseCsvFromFilePath = this.parseCsvFromFilePath.bind(this);
     }
-    
-    csvToJson(csvFile) {
-        return this.storeAndDeleteAfter(csvFile, this.parseCsv);
+    /**
+     * Parses a the given csv file to 
+     */
+    parseCsvFromFile(csvFile) {
+        return this.storeAndDeleteAfter(csvFile, this.parseCsvFromFilePath);
     }
 
-    parseCsv(filePath) {
+    /**
+     * Parses a csv file located in the given path.
+     * @param {string} filePath 
+     */
+    parseCsvFromFilePath(filePath) {
         return csv(this.csvOptions).fromFile(filePath).then(json => {
             return json;
         })

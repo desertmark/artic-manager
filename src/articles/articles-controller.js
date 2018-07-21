@@ -73,8 +73,10 @@ class ArticlesController {
     put(req, res) {
         const bulkFile = req.files ? req.files.bulk : null;
         if(bulkFile) {
-            this.fileService.csvToJson(bulkFile).then(json =>{
-                res.send(json);
+            this.fileService.parseCsvFromFile(bulkFile).then(json =>{
+                return this.articleService.updateBatch(json).then(articles => {
+                    res.send(articles);
+                });
             })
             .catch(err => {
                  res.status(500).send(err);
@@ -96,21 +98,6 @@ class ArticlesController {
             return;
         }
         res.sendStatus(400);       
-    }
-
-    putByCodeRange(req,res) {
-
-    }
-
-    putByFile(req, res) {
-        req.files.foto.mv('./test.txt').then(() => {
-            csv({delimiter:';'})
-            .fromFile('./test.txt')
-            .then(json => {
-                res.send(json);
-            })
-        })
-
     }
 
     delete(req, res) {

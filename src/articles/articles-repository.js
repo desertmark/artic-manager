@@ -46,7 +46,7 @@ class ArticleRepository {
      * @param {*} article 
      */
     updateArticle(article) {
-        return this.Article.findByIdAndUpdate(article.id, { $set: article })
+        return this.Article.findByIdAndUpdate(article._id, { $set: article })
         .catch(err => new MongooseError(err));
     }
     

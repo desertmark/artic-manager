@@ -1,6 +1,8 @@
 const roleEnum = require('../users/roles-enum');
 const _ = require('lodash');
-const BusinessError = require('../util/errors').BusinessError;
+const { BusinessError, InternalServerError } = require('../util/errors');
+const UpdateByCodeRangeModel = require('./models/updateByCodeRangeModel');
+
 class ArticleService {
     constructor(opts) {
         this.currentUser = opts.currentUser;
@@ -60,17 +62,48 @@ class ArticleService {
      *  }
      * }
      * `
-     * @param {*} model 
+     * @param {UpdateByCodeRangeModel} model 
      */
     updateByCodeRange(model) {
-        if(!this.isCodeRangeModelValid(model)) {
+        if(!(model instanceof UpdateByCodeRangeModel)) {
+            throw new InternalServerError('updateByCodeRange: expected UpdateByCodeRangeModel as a parameter.');
+        }
+        if(!model.isValid()) {
             return Promise.reject(new BusinessError('Invalid Model. Please specify from, to and what fields to update along with the values.'))
         }
         const codeFrom = model.from;
         const codeTo = model.to;
         const filter = {code:{$gte: codeFrom,$lte: codeTo}};
         const query = {$set: model.fields};
-        return this.articleRepository.updateMany(filter, query, {upsert: false});
+        return this.articleRepository.updateMany(filter, query);
+    }
+
+    /**
+     * Performs a partial updates of all the articles listed in the collections. If the article doesn't exist it doesn't creates it.
+     * articles must detail _id or code property.
+     * @param {*} articles 
+     */
+    updateBatch(articles) {
+        let promises = [];
+        articles.forEach(article => {
+            const filter = {
+                $or:[
+                    {code: article.code },
+                    {_id: article._id }
+                ]
+            };
+            const query = {
+                $set: {
+                    
+                } 
+            };
+            promises.push(this.articleRepository.updateMany(filter, query));
+        });
+        return Promise.all(promises)
+        .catch(err => {
+            console.log('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.');
+            return err;
+        });
     }
     
     /**
@@ -132,16 +165,6 @@ class ArticleService {
      */
     parseCodeToInt(code) {
         return parseInt(code.replace(/[.]/g,''));
-    }
-
-    /**
-     * Checks if the given model is a valid model to perform a bulk updateByCodeRange.
-     * @param {*} model 
-     */
-    isCodeRangeModelValid(model) {
-        return  typeof model.from === "number" &&
-                typeof model.to   === "number" && 
-                model.fields
     }
 }
 

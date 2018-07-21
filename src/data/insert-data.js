@@ -158,11 +158,11 @@ function mapArticlesJSONToArticlesModel(articlesJSON) {
         art.utility = +(art.utility - 1).toFixed(2);
         art.discounts = [
             {
-                description:'Boninifcacion',
+                description:'Bonificacion',
                 amount: art.bonus/100
             },
             {
-                description:'Boninifcacion 2',
+                description:'Bonificacion 2',
                 amount: art.bonus2/100
             },
             {
