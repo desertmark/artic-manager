@@ -1,7 +1,7 @@
 const roleEnum = require('../users/roles-enum');
 const _ = require('lodash');
 const { BusinessError, InternalServerError } = require('../util/errors');
-const UpdateByCodeRangeModel = require('./models/updateByCodeRangeModel');
+const { UpdateByCodeRangeModel, GuidoliArticle } = require('./models/');
 
 class ArticleService {
     constructor(opts) {
@@ -85,25 +85,46 @@ class ArticleService {
      */
     updateBatch(articles) {
         let promises = [];
-        articles.forEach(article => {
-            const filter = {
-                $or:[
-                    {code: article.code },
-                    {_id: article._id }
-                ]
-            };
-            const query = {
-                $set: {
-                    
-                } 
-            };
-            promises.push(this.articleRepository.updateMany(filter, query));
+        articles.forEach(guidoliArticle => {
+            // map raw json with changes to a type.
+            const article = new GuidoliArticle(guidoliArticle).toArticle();
+            // find the article and perform all the changes.
+            const promise = this.articleRepository.findByCode(article.code)
+            .then(articleToUpdate => {
+                const updatedArticle = this.updateArticleFromGuidoliArticle(articleToUpdate, article);
+                return updatedArticle.save();
+            });
+            promises.push(promise);
         });
         return Promise.all(promises)
         .catch(err => {
             console.log('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.');
             return err;
         });
+    }
+
+    /**
+     * finds the discount with the provided description from the discounts property
+     * @param {*} article 
+     * @param {*} discountDescription 
+     */
+    findArticleDiscount(article, discountDescription) {
+        return article.discounts ? article.discounts.find(dis => dis.description === discountDescription) : null;
+    }
+
+    /**
+     * Updates the listPrice field and the bonifcacion and bonificacion2 discounts of articleToUpdate from guidoliArticle.
+     * @param {*} articleToUpdate 
+     * @param {*} guidoliArticle 
+     */
+    updateArticleFromGuidoliArticle(articleToUpdate, guidoliArticle) {
+        articleToUpdate.listPrice = article.listPrice;
+        const bonificacion = this.findArticleDiscount(article, 'Bonificacion');
+        const bonificacion2 = this.findArticleDiscount(article, 'Bonificacion2')
+        if(bonificacion) bonificacion.amount = article.bonificacion;
+        if(bonificacion2) bonificacion2.amount = article.bonificacion2;
+
+        return articleToUpdate;
     }
     
     /**

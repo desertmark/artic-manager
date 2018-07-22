@@ -7,6 +7,10 @@ class ArticleRepository {
     findById(id) {
         return this.Article.findById(id).populate('category');
     }
+
+    findByCode(code) {
+        return this.Article.find({code: code}).populate('category');
+    }
     
     /**
      * Query Articles table and paginates results.
