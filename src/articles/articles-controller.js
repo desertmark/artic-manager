@@ -1,9 +1,4 @@
 const UpdateByCodeRangeModel = require('./models/updateByCodeRangeModel');
-const csv = require('csvtojson');
-const fs = require('fs');
-const config = require('../config/config');
-const path = require('path');
-const uuidv4  = require('uuid/v4');
 class ArticlesController {
     constructor(opts) {
         this.articleService = opts.articleService;
@@ -75,11 +70,11 @@ class ArticlesController {
         if(bulkFile) {
             this.fileService.parseCsvFromFile(bulkFile).then(json =>{
                 return this.articleService.updateBatch(json).then(articles => {
-                    res.send(articles);
+                    res.send(articles.length);
                 });
             })
             .catch(err => {
-                 res.status(500).send(err);
+                 res.status(500).send(err.toObject() || err.message);
              });
             return;
         }

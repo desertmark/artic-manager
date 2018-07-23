@@ -1,27 +1,8 @@
-module.exports = class GuidoliArtilce {
+module.exports = class GuidoliArticle {
     constructor(article) {
-        this.codigo = article["Codigo"];
-        this.precio = article["Precio"];
-        this.bonificacion = article["Bonif"];
-        this.bonificacion2 = article["Bonif2"];
-    }
-
-    toArticle() {
-        return {
-            code: this.getIntCode(),
-            listPrice: this.precio,
-            discounts: [{
-                    description:"Bonificacion",
-                    amount: this.bonificacion
-                },
-                {
-                    description: "Bonificacion2",
-                    amount: this.bonificacion2
-                }]
-        };
-    }
-
-    getIntCode() {
-        parseInt(this.codigo.replace(/[.]/g,''));
+        this.codigo = parseInt(article["Codigo"].replace(/[.]/g,''));
+        this.precio = parseFloat(article["Precio"]);
+        this.bonificacion = parseFloat(article["Bonif"]);
+        this.bonificacion2 = parseFloat(article["Bonif2"]);
     }
 }

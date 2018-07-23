@@ -9,7 +9,7 @@ class ArticleRepository {
     }
 
     findByCode(code) {
-        return this.Article.find({code: code}).populate('category');
+        return this.Article.findOne({code: code}).populate('category');
     }
     
     /**

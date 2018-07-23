@@ -85,18 +85,31 @@ class ArticleService {
      */
     updateBatch(articles) {
         let promises = [];
-        articles.forEach(guidoliArticle => {
+        articles.forEach(article => {
             // map raw json with changes to a type.
-            const article = new GuidoliArticle(guidoliArticle).toArticle();
+            const guidoliArticle = new GuidoliArticle(article);
             // find the article and perform all the changes.
-            const promise = this.articleRepository.findByCode(article.code)
+            const promise = this.articleRepository.findByCode(guidoliArticle.codigo)
             .then(articleToUpdate => {
-                const updatedArticle = this.updateArticleFromGuidoliArticle(articleToUpdate, article);
-                return updatedArticle.save();
+                if(articleToUpdate) {
+                    const updatedArticle = this.updateArticleFromGuidoliArticle(articleToUpdate, guidoliArticle);
+                    return updatedArticle.save()
+                    .then(doc => {
+                        console.log('Batch Update succesfull for article', doc.code);
+                        return doc;
+                    })
+                    .catch(err => {
+                        console.error('Batch Update fail for article', doc.code);
+                        return err;
+                    });
+                }
             });
             promises.push(promise);
         });
         return Promise.all(promises)
+        .then(docs =>{
+            return docs;
+        })
         .catch(err => {
             console.log('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.');
             return err;
@@ -118,12 +131,11 @@ class ArticleService {
      * @param {*} guidoliArticle 
      */
     updateArticleFromGuidoliArticle(articleToUpdate, guidoliArticle) {
-        articleToUpdate.listPrice = article.listPrice;
-        const bonificacion = this.findArticleDiscount(article, 'Bonificacion');
-        const bonificacion2 = this.findArticleDiscount(article, 'Bonificacion2')
-        if(bonificacion) bonificacion.amount = article.bonificacion;
-        if(bonificacion2) bonificacion2.amount = article.bonificacion2;
-
+        articleToUpdate.listPrice = guidoliArticle.precio;
+        const bonificacion = this.findArticleDiscount(articleToUpdate, 'Bonificacion');
+        const bonificacion2 = this.findArticleDiscount(articleToUpdate, 'Bonificacion 2')
+        if(bonificacion) bonificacion.amount = guidoliArticle.bonificacion;
+        if(bonificacion2) bonificacion2.amount = guidoliArticle.bonificacion2;
         return articleToUpdate;
     }
     

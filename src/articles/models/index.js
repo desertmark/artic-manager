@@ -1,2 +1,2 @@
-module.exports.GuidoliArtilce = require('./guidoliArticle');
+module.exports.GuidoliArticle = require('./guidoliArticle');
 module.exports.UpdateByCodeRangeModel = require('./updateByCodeRangeModel');
