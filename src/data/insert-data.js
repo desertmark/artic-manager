@@ -156,6 +156,7 @@ function mapArticlesJSONToArticlesModel(articlesJSON) {
         art.card = art.card/100;
         art.transport = art.transport/100;
         art.utility = +(art.utility - 1).toFixed(2);
+        art.vat = art.vat / 100;
         art.discounts = [
             {
                 description:'Bonificacion',

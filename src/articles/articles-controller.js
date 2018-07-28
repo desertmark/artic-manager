@@ -70,11 +70,13 @@ class ArticlesController {
         if(bulkFile) {
             this.fileService.parseCsvFromFile(bulkFile).then(json =>{
                 return this.articleService.updateBatch(json).then(articles => {
-                    res.send(articles.length);
+                    console.log(`PUT: Articles, By File. ${articles.length} articles processed.`);
+                    res.send({processed: articles.length});
                 });
             })
             .catch(err => {
-                 res.status(500).send(err.toObject() || err.message);
+                console.error(`PUT: Articles By File`, err);
+                res.status(500).send(err.toObject() || err.message);
              });
             return;
         }

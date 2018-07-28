@@ -37,11 +37,11 @@ articleSchema.virtual('cost').get(function() {
 });
 
 articleSchema.virtual('price').get(function() {
-    return this.cost*(1 + this.utility + this.transport);
+    return parseFloat(this.cost*(1 + this.utility + this.transport).toFixed(2));
 });
 
 articleSchema.virtual('cardPrice').get(function() {
-    return this.price*(1 + this.card);
+    return parseFloat(this.price*(1 + this.card).toFixed(2));
 });
 
 const Article = mongoose.model('Article', articleSchema);
