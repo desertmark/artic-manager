@@ -1,4 +1,4 @@
-const PORT_NUMBER       = process.env.PORT || 3000 ;
+const PORT_NUMBER       = process.env.PORT || 3001 ;
 const config            = require('./config/config.js');
 const app               = require('express')();
 const passport          = require('passport');
@@ -7,13 +7,14 @@ const awilixConfig      = require('./config/awilix');
 const awilixExpress     = require('awilix-express');
 const bodyParser        = require('body-parser');
 const fileUpload        = require('express-fileupload');
+const cors              = require('cors');
 require('./data/seed-data')();
 
 const info = {
     status: `App is running on port: ${PORT_NUMBER}`,
     env: config.env
 }
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload());
 // AWILIX

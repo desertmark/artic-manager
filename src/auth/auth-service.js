@@ -53,7 +53,7 @@ class AuthService {
         return this.userRepository.findByEmail(email).then(user => {
             if (!user) {
                 return Promise.reject({
-                    status:404,
+                    status:401,
                     message:'Invalid email address.'
                 });
             }
