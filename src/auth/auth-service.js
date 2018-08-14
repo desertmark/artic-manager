@@ -77,7 +77,7 @@ class AuthService {
     logout(token) {
         const decodedToken = jwt.decode(token);
         const userId = decodedToken._id;
-        return this.userReopository.updateUser(userId, {nonce: null});
+        return this.userRepository.updateUser(userId, {nonce: null});
     }
 }
 
