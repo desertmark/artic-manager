@@ -67,7 +67,7 @@ class UserRepository {
     }
 
     updateUser(id, fields) {
-        return this.User.findByIdAndUpdate(id,{$set:fields});
+        return this.User.findByIdAndUpdate(id,{$set:fields}, {new: true});
     }
 
     createOrUpdate(user) {
