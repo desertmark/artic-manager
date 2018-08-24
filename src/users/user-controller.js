@@ -26,6 +26,16 @@ class UserController {
         });
     }
 
+    put(req, res) {
+        this.userRepository.updateUser(req.params.id, req.body).then(user => {
+            res.json(user);
+        })
+        .catch(err => {
+            console.error('PUT: /:id', err);
+            res.status(err.status || 500).json(err);
+        });
+    }
+
     post(req, res) {
         this.userRepository.createUser(req.body).then(user => {
             res.json(user);
