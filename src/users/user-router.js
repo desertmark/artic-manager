@@ -10,6 +10,7 @@ const ctrlBuilder = awilixExpress
 .before(passport.authenticateJwt(roleEnum.ADMIN))
 .get('/','getAll')
 .get('/:id','get')
+.put('/:id','put')
 .post('/','post', {before: middlewares.isAdmin});
 
 module.exports = ctrlBuilder;
