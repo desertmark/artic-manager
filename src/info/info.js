@@ -6,7 +6,9 @@ module.exports = new Promise((res, rej) => {
         if(err) {
             rej(error);  
         } else {
-            const version = `${new Date(Number.parseInt(commit.committedOn)).toUTCString()}_${commit.shortHash}`;
+            // multiply for 1000 to pass from unix to js
+            const date = new Date(Number.parseInt(commit.committedOn*1000)).toUTCString()
+            const version = `${date} - ${commit.shortHash}`;
             const msg = commit.subject;
             
             const info = {
