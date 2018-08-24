@@ -4,7 +4,7 @@ const config      = require('../config/config.js');
 module.exports = new Promise((res, rej) => {
     git.getLastCommit((err, commit) => {
         if(err) {
-            rej(error);  
+            rej(err);  
         } else {
             // multiply for 1000 to pass from unix to js
             const date = new Date(Number.parseInt(commit.committedOn*1000)).toUTCString()
