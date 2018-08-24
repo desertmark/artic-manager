@@ -7,13 +7,15 @@
     "node": "8.11.3"
   },
   "scripts": {
-    "start": "node ./src/index.js",
+    "start": "npm run version && npm run start:api",
+    "start:api":"node ./src/index.js",
     "start:w": "nodemon ./src/index.js",
     "localdb": "mongod --dbpath %MONGO_DB_PATH%",
     "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",
-    "test": "jasmine --config=./jasmine.json"
+    "test": "jasmine --config=./jasmine.json",
+    "version": "node ./src/util/version.js"
   },
   "repository": {
     "type": "git",
