@@ -19,6 +19,9 @@ function isHimselfOrAdmin(req, res, next) {
     req.user && (req.user.role === roleEnum.ADMIN || req.user._id.toString() === req.params.id) ? next() : res.sendStatus(403);
 }
 
+/**
+ * Checks if a non admin user is trying to change the user role. Prevents a user to set an admin role to himself or others.
+ */
 function isRoleEditing(req, res, next) {
     !hasAdminRole(req.user) && req.body.role !== req.user.role ? res.sendStatus(403) : next();
 }
