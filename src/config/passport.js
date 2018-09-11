@@ -43,15 +43,16 @@ module.exports = (passport, container) => {
 
 // always register currentUser after authenticate middleware has already run. So req.user is available.
 function defineAuthenticateJwt(passport) {
-    passport.authenticateJwt = (role) => customAuthenticateMiddleware(passport, role);
+    passport.authenticateJwt = (roles) => customAuthenticateMiddleware(passport, roles);
     return passport;
 }
 
-function customAuthenticateMiddleware(passport, role) {
+function customAuthenticateMiddleware(passport, roles = []) {
+    roles = typeof roles === 'string' ? [roles] : roles;
     return (req, res, next) => {
         passport.authenticate('jwt', {session: false, }, (err, user, info) => {
             // if anonymous role was especified for the endpoint we let anybody pass.
-            if(role === roleEnum.ANONYMOUS) {
+            if(roles.includes(roleEnum.ANONYMOUS)) {
                 req.container.register({currentUser: awilix.asValue(user || null)});
                 return next();
             }
@@ -62,12 +63,12 @@ function customAuthenticateMiddleware(passport, role) {
                 // user is authenticated
                 req.user = user;
                 req.container.register({currentUser: awilix.asValue(user)});
-                if(!role) {
+                if(!roles || roles.length === 0) {
                     // if no role was especified for this endpoint we let him pass.
                     return next();
                 } else {
                     // a role was especified for this endpoint.
-                    if(user.role === role) {
+                    if(roles.includes(user.role)) {
                         // we let him pass if the roles match.
                         return next();
                     } else {

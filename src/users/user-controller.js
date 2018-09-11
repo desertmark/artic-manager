@@ -45,6 +45,16 @@ class UserController {
             res.status(err.status || 500).json(err);
         });
     }
+
+    delete(req, res) {
+        this.userRepository.deleteUser(req.params.id).then(user => {
+            res.json(user);
+        })
+        .catch(err => {
+            console.error('DELETE: /:id', err);
+            res.status(err.status || 500).json(err);
+        });
+    }
 }
 
 module.exports = UserController;

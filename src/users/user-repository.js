@@ -74,6 +74,10 @@ class UserRepository {
         return this.User.findOneAndUpdate({email:user.email},{$set:user}, {upsert: true});
     }
 
+    deleteUser(userId) {
+        return this.User.findByIdAndRemove(userId);
+    }
+
 }
 
 
