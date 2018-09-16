@@ -5,7 +5,7 @@ Error.prototype.toObject = function() {
 }
 
 class BusinessError extends Error {
-    constructor(message = 'Business Error', status = 400, error = null) {
+    constructor(message = 'Business Error', status = 422, error = null) {
         super(message);
         this.message = message;
         this.status = status;

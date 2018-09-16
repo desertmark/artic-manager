@@ -5,11 +5,7 @@ const jwt = require('jsonwebtoken');
 class AuthService {
     constructor(opts) {
         this.userRepository = opts.userRepository;
-
-        // this.comparePassword = this.comparePassword.bind(this);
-        // this.hashPassword = this.hashPassword.bind(this);
-        // this.generateNonce = this.generateNonce.bind(this);
-        // this.getClaims = this.getClaims.bind(this);
+        this.currentUser = opts.currentUser;
         this.generateToken = this.generateToken.bind(this);
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
@@ -78,6 +74,24 @@ class AuthService {
         const decodedToken = jwt.decode(token);
         const userId = decodedToken._id;
         return this.userRepository.updateUser(userId, {nonce: null});
+    }
+
+    passwordUpdate(model) {
+        if(model.newPassword !== model.confirmPassword) {
+            return Promise.reject(new BusinessError(`New Password and confimation don't match.`));
+        }
+        return AuthService.comparePassword(model.oldPassword, this.currentUser.passwordHash).then(isMatch => {
+            if(!isMatch) {
+                return Promise.reject({
+                    status:401,
+                    message:'Invalid password.'
+                });
+            }
+            return AuthService.hashPassword(model.newPassword).then(newPasswordHash => {
+                this.currentUser.passwordHash = newPasswordHash;
+                return this.currentUser.save();
+            });
+        });
     }
 }
 

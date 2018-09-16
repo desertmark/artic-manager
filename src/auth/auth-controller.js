@@ -30,5 +30,14 @@ class AuthController {
     isAuthenticated(req,res) {
         res.json({isAuthenticated: true});
     }
+
+    passwordUpdate(req, res) {
+        this.authService.passwordUpdate(req.body).then(() => {
+            res.sendStatus(200);
+        })
+        .catch(error => {
+            res.status(error.status || 500).json(error);
+        })
+    }
 }
 module.exports = AuthController;

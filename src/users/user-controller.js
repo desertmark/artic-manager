@@ -1,3 +1,4 @@
+const omit = require('lodash/omit');
 class UserController {
     constructor(opts) {
         this.userRepository = opts.userRepository;
@@ -18,6 +19,7 @@ class UserController {
 
     get(req, res) {
         this.userRepository.findById(req.params.id).then(user => {
+            user
             res.json(user);
         })
         .catch(err => {

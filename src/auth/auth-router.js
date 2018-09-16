@@ -6,7 +6,8 @@ const ctrlBuilder = awilixExpress
 .createController(AuthController)
 .prefix('/auth')
 .post('/login','login')
-.get('/logout','logout',{before: passport.authenticateJwt()})
-.get('/isAuthenticated','isAuthenticated', {before: passport.authenticateJwt()});
+.get('/logout','logout', { before: passport.authenticateJwt() })
+.post('/passwordUpdate', 'passwordUpdate', { before: passport.authenticateJwt() })
+.get('/isAuthenticated','isAuthenticated', { before: passport.authenticateJwt() });
 
 module.exports = ctrlBuilder;
