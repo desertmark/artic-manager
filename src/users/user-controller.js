@@ -1,4 +1,3 @@
-const omit = require('lodash/omit');
 class UserController {
     constructor(opts) {
         this.userRepository = opts.userRepository;

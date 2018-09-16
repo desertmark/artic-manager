@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const config = require('../config/config.js');
 const jwt = require('jsonwebtoken');
+const BusinessError = require('../util/errors').BusinessError;
 
 class AuthService {
     constructor(opts) {
