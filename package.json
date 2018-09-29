@@ -9,7 +9,7 @@
   "scripts": {
     "start": "npm run start:api",
     "start:api": "node ./src/index.js",
-    "start:version": "npm run version && npm start:api",
+    "start:version": "npm run version && npm run start:api",
     "start:w": "nodemon ./src/index.js",
     "localdb": "mongod --dbpath %MONGO_DB_PATH%",
     "bulk": "node ./src/data/insert-data.js",

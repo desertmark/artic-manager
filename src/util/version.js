@@ -2,6 +2,7 @@ const git = require('git-last-commit');
 const fs  = require('fs');
 const path = require('path');
 module.exports = new Promise((res, rej) => {
+    
     git.getLastCommit((err, commit) => {
         if(err) {
             rej(err);  
@@ -13,6 +14,7 @@ module.exports = new Promise((res, rej) => {
             fs.writeFileSync(
                 path.resolve(path.join(__dirname,'../info/version.json')),
                 JSON.stringify({name, msg}));
+            console.log('new version generated:', {name, msg});
             res();
         }
     });
