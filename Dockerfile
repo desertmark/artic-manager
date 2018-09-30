@@ -14,9 +14,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-CMD [ "echo", "generating version info..." ]
-CMD [ "npm", "run", "version" ]
-
 EXPOSE 3001
 
 CMD [ "npm", "run", "start" ]

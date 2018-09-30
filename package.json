@@ -10,15 +10,15 @@
     "start": "npm run start:api",
     "start:api": "node ./src/index.js",
     "start:version": "npm run version && npm run start:api",
-    "start:docker": "docker-compose -f docker-local-override.yml up",
     "start:w": "nodemon ./src/index.js",
     "localdb": "mongod --dbpath %MONGO_DB_PATH%",
-    "localdb:docker": "docker run -p 27017:27017 mongo",
+    "docker:build": "docker-compose build",
+    "docker:start": "docker-compose -f docker-local-override.yml up",
+    "docker:localdb": "docker run -p 27017:27017 mongo",
     "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",
-    "test": "jasmine --config=./jasmine.json",
-    "version": "node ./src/util/version.js"
+    "test": "jasmine --config=./jasmine.json"
   },
   "repository": {
     "type": "git",
