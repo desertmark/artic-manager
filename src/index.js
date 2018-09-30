@@ -7,7 +7,7 @@ const awilixExpress     = require('awilix-express');
 const bodyParser        = require('body-parser');
 const fileUpload        = require('express-fileupload');
 const cors              = require('cors');
-const info              = require('./info/info');
+const getInfo           = require('./info/info');
 require('./data/seed-data')();
 
 app.use(cors());
@@ -25,9 +25,9 @@ app.use(passport.session());
 app.use(awilixExpress.loadControllers('**/*-router.js'))
 const articlesRouter = require('./articles');
 app.use('/', articlesRouter); // Loading articles router separately because it uses router.param which is not expose by awilix's createController wrapper.
-app.get('/info', (req, res) => res.send(info));
+app.get('/info', (req, res) => getInfo.then(info => res.send(info)));
 
 //START
-app.listen(PORT_NUMBER, () => console.log(info));
+app.listen(PORT_NUMBER, () => getInfo.then(info => console.log(info)));
 
 
