@@ -27,9 +27,10 @@ class ArticleService {
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
     listArticles(page, size, filter = {}, fields = null) {
-        return this.articleRepository.listArticles(page, size, filter).then(articles => {
-            let fieldsToPick= this.getAllowedFields(fields);
-            return fieldsToPick ? articles.map(art => _.pick(art, fieldsToPick)) : articles;
+        return this.articleRepository.listArticles(page, size, filter).then(queryResult => {
+            let fieldsToPick = this.getAllowedFields(fields);
+            queryResult.articles = fieldsToPick ? queryResult.articles.map(art => _.pick(art, fieldsToPick)) : queryResult.articles;
+            return queryResult;
         });
     }
     

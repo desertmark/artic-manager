@@ -14,9 +14,9 @@ class ArticlesController {
 
     get(req, res) {
         this.articleService.listArticles(req.query.page, req.query.size, {}, res.locals.fields)
-        .then(articles => {
-            console.log('GET: Articles', articles.length);
-            res.send(articles);
+        .then(queryResult => {
+            console.log('GET: Articles', queryResult.articles.length);
+            res.send(queryResult);
         })
         .catch(err => {
             console.error('GET: Articles', err);

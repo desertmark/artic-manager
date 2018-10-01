@@ -35,6 +35,9 @@ class ArticleRepository {
         .sort('description')
         .skip(page*size)
         .limit(size)
+        .then(articles => {
+            return this.Article.count(queryFilter).then(totalSize => ({totalSize, articles}))
+        });
         return query;
     }
     
