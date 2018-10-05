@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const MongooseError = require('../util/errors').MongooseError;
 class ArticleRepository {
     constructor(opts) {
@@ -26,19 +27,46 @@ class ArticleRepository {
     
         // optional filters: matching codes and/or partial description match
         let queryFilter = {};
+
         if(filter.code) queryFilter.code = { $eq: filter.code };
         if(filter.description) queryFilter.description = { $regex: `.*${filter.description}.*` };
-    
+
+        let categoryFilter = {};
+        if(filter.category) {
+            if(filter.category._id) categoryFilter['category._id'] = { $eq: mongoose.mongo.ObjectId(filter.category._id) };
+            if(filter.category.description) categoryFilter['category.description'] = { $regex: `.*${filter.category.description}.*` };
+        }
+
+        const pipeline = [
+            { $match: queryFilter },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'category'
+                }
+            },
+            { $unwind: '$category' },
+            { $match: categoryFilter }
+        ];
+
         const query = this.Article
-        .find(queryFilter)
-        .populate('category')
+        .aggregate(pipeline)
         .sort('description')
         .skip(page*size)
         .limit(size)
-        .then(articles => {
-            return this.Article.count(queryFilter).then(totalSize => ({totalSize, articles}))
+        
+        const count = this.Article
+        .aggregate(pipeline)
+        .count('value');
+
+        // Map aggregate model.
+        return Promise
+        .all([query, count])
+        .then(([articles, [totalSize]]) => {
+            return { articles, totalSize: totalSize.value }
         });
-        return query;
     }
     
     createArticle(article) {
