@@ -1,3 +1,4 @@
+const get = require('lodash/get');
 const mongoose = require('mongoose');
 const MongooseError = require('../util/errors').MongooseError;
 class ArticleRepository {
@@ -65,7 +66,7 @@ class ArticleRepository {
         return Promise
         .all([query, count])
         .then(([articles, [totalSize]]) => {
-            return { articles, totalSize: totalSize.value }
+            return { articles, totalSize: get(totalSize, 'value', 0) };
         });
     }
     
