@@ -26,7 +26,8 @@ const articleSchema = new Schema({
 }, 
 {
     id: false, 
-    toObject:{virtuals:true}
+    toObject:{virtuals:true},
+    toJson:{virtuals:true}
 });
 // NOTE: Don't use Arrow function, it causes "this" keyword to be equal to "{}" insetead of the model.
 // NOTE: If we take out one of these colums using projection, the value here will be null.

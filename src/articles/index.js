@@ -11,7 +11,7 @@ const ctrlBuilder = awilixExpress
 .get('/', 'get',{before: [passport.authenticateJwt(roleEnum.ANONYMOUS),middlewares.parseFieldsToArray]})
 .get('/:id', 'getById')
 .post('/', 'post')
-.post('/search', 'postSearch',{before: middlewares.parseFields})
+.post('/search', 'postSearch',{before: [passport.authenticateJwt(roleEnum.ANONYMOUS), middlewares.parseFieldsToObject]})
 .put('/','put')
 .put('/:id', 'putById')
 .delete('/:id', 'delete');
