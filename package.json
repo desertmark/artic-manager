@@ -18,7 +18,8 @@
     "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",
-    "test": "jasmine --config=./jasmine.json"
+    "test": "jasmine --config=./jasmine.json",
+    "version": "node ./src/util/version.js"
   },
   "repository": {
     "type": "git",

@@ -11,10 +11,10 @@ module.exports = new Promise((res, rej) => {
             const date = new Date(Number.parseInt(commit.committedOn*1000)).toUTCString()
             const name = `${date} - ${commit.shortHash}`;
             const msg = commit.subject;
-            // fs.writeFileSync(
-            //     path.resolve(path.join(__dirname,'../info/version.json')),
-            //     JSON.stringify({name, msg}));
-            // console.log('new version generated:', {name, msg});
+            fs.writeFileSync(
+                path.resolve(path.join(__dirname,'../info/version.json')),
+                JSON.stringify({name, msg}));
+            console.log('new version generated:', {name, msg});
             res({name, msg});
         }
     });
