@@ -1,3 +1,4 @@
+require('dotenv').config('../');
 const PORT_NUMBER       = process.env.PORT || 3001 ;
 const app               = require('express')();
 const passport          = require('passport');

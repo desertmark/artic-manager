@@ -171,13 +171,16 @@ class ArticleService {
             console.error('articleFactory: Article is not valid.', model);
             return null;
         }
-        model.card      = model.card || 0.23;
-        model.transport = model.transport || 0.14;
-        model.vat       = model.vat || 0.21;
-        model.discounts = model.discounts || [];
-        model.dolar     = model.dolar || 0;
-        // model.price = model.listPrice + model.listPrice*(-model.bonus/100 -model.bonus2/100 -model.cashDiscount/100 -model.cashDiscount2/100 + model.vat/100 + model.transport/100 + model.utility/100);
-        return model;
+        let article = Object.assign({
+            card: 0.23,
+            transport: 0.14,
+            vat: 0.21, 
+            discounts: [],
+            dolar: 0,
+            category: model.categoryId
+        }, model);
+        delete model.categoryId;
+        return article;
     }
 
     getAllowedFields(fields) {
