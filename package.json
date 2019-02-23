@@ -13,7 +13,7 @@
     "localdb": "mongod --dbpath %MONGO_DB_PATH%",
     "docker:build": "docker-compose build",
     "docker:start": "docker-compose -f docker-local-override.yml up",
-    "docker:localdb": "docker run -p 27017:27017 mongo",
+    "docker:localdb": "docker run -d -p 27017:27017 mongo --name artic-manager-db",
     "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",

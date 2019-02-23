@@ -30,6 +30,7 @@ class ArticleRepository {
         let queryFilter = {};
 
         if(filter.code) queryFilter.code = { $eq: filter.code };
+        if(filter.codeString) queryFilter.codeString = { $regex: `.*${filter.codeString}.*` };
         if(filter.description) queryFilter.description = { $regex: `.*${filter.description}.*` };
 
         let categoryFilter = {};

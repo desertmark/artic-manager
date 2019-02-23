@@ -5,6 +5,8 @@ const package     = require('../../package.json');
 module.exports = Promise.resolve({
         status: `App is running on port: ${PORT_NUMBER}`,
         env: config.env,
-        version: package.version
+        version: package.version,
+        ok: true,
+        time: new Date()
 });
 

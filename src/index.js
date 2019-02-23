@@ -1,5 +1,5 @@
 require('dotenv').config('../');
-const PORT_NUMBER       = process.env.PORT || 3001 ;
+const PORT_NUMBER       = process.env.PORT || 3001;
 const app               = require('express')();
 const passport          = require('passport');
 const configurePassport = require('./config/passport');
@@ -9,11 +9,17 @@ const bodyParser        = require('body-parser');
 const fileUpload        = require('express-fileupload');
 const cors              = require('cors');
 const getInfo           = require('./info/info');
+const initMongoose      = require('./config/mongoose');
 require('./data/seed-data')();
 
+// PARSERS
 app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload());
+
+//DB
+initMongoose();
+
 // AWILIX
 const container = awilixConfig.getContainer();
 app.use(awilixConfig.scopeContainer(container));

@@ -7,8 +7,8 @@ class ArticleService {
     constructor(opts) {
         this.currentUser = opts.currentUser;
         this.articleRepository = opts.articleRepository;
-        this.anonymouseAllowedFields = ["_id", "code", "category", "description"];
-        this.userAllowedFields = ["_id", "code", "category", "description", "price", "cardPrice"];
+        this.anonymouseAllowedFields = ["_id", "code", "codeString", "category", "description"];
+        this.userAllowedFields = ["_id", "code", "codeString", "category", "description", "price", "cardPrice"];
     }
 
     findById(id) {
@@ -154,7 +154,8 @@ class ArticleService {
      * @returns {Boolean} Boolean
      */
     isValid(article) {
-        return article.code         &&
+        // code regex validator is xx.xx.xx.xx where x = number;
+        return /\d.[.]\d.[.]\d.[.]\d./.test(article.codeString) &&
             article.description     &&
             article.listPrice   > 0 &&
             article.dolar       > 0 && 
@@ -172,6 +173,7 @@ class ArticleService {
             return null;
         }
         let article = Object.assign({
+            code: parseInt(model.codeString.replace(/[.]/gm,'')),
             card: 0.23,
             transport: 0.14,
             vat: 0.21, 

@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const config = require('../config/config.js');
 const _ = require('lodash');
-console.log(config);
-mongoose.connect(config.dbConnection);
 
 const discountSchema = new Schema({
     description: { type: String, required: true },
@@ -14,6 +11,7 @@ const discountSchema = new Schema({
 });
 const articleSchema = new Schema({
     code:Number,
+    codeString: String,
     description:String,
     discounts: [discountSchema],
     utility:Number,

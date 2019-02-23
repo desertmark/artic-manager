@@ -1,3 +1,7 @@
+const initMongoose = require('../config/mongoose');
+
+initMongoose();
+
 var   articlesJSON = require('./sanita.json');
 const Article = require('../articles/articles');
 const Category = require('../categories/categories');
@@ -152,6 +156,7 @@ function mapArticlesJSONToArticlesModel(articlesJSON) {
     return articlesJSON.map(art => {
         delete art.price;
         delete art.cost;
+        art.codeString = art.code;
         art.code = parseInt(art.code.replace(/[.]/g,''));
         art.card = art.card/100;
         art.transport = art.transport/100;
