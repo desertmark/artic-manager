@@ -67,7 +67,7 @@ class ArticleRepository {
         return Promise
         .all([query, count])
         .then(([articles, [totalSize]]) => {
-            articles = articles.map(a => new this.Article(a));
+            // articles = articles.map(a => new this.Article(a));
             return { articles, totalSize: get(totalSize, 'value', 0) };
         });
     }
