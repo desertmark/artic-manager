@@ -1,5 +1,5 @@
-const get = require('lodash/get');
-const mongoose = require('mongoose');
+const _filter = require('lodash/filter');
+const { queryFilter, categoryFilter } = require('./articles-filter-factory');
 const MongooseError = require('../util/errors').MongooseError;
 class ArticleRepository {
     constructor(opts) {
@@ -25,50 +25,20 @@ class ArticleRepository {
     listArticles(page, size, filter = {}) {
         page = parseInt(page) || 0;
         size = parseInt(size) || 20;
-    
-        // optional filters: matching codes and/or partial description match
-        let queryFilter = {};
-
-        if(filter.code) queryFilter.code = { $eq: filter.code };
-        if(filter.codeString) queryFilter.codeString = { $regex: `.*${filter.codeString}.*` };
-        if(filter.description) queryFilter.description = { $regex: `.*${filter.description}.*` };
-
-        let categoryFilter = {};
-        if(filter.category) {
-            if(filter.category._id) categoryFilter['category._id'] = { $eq: mongoose.mongo.ObjectId(filter.category._id) };
-            if(filter.category.description) categoryFilter['category.description'] = { $regex: `.*${filter.category.description}.*` };
-        }
-
-        const pipeline = [
-            { $match: queryFilter },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'category',
-                    foreignField: '_id',
-                    as: 'category'
-                }
-            },
-            { $unwind: '$category' },
-            { $match: categoryFilter }
-        ];
-
-        const query = this.Article
-        .aggregate(pipeline)
-        .sort('description')
-        .skip(page*size)
-        .limit(size)
         
-        const count = this.Article
-        .aggregate(pipeline)
-        .count('value');
-
-        // Map aggregate model.
+        const query = this.Article
+            .find(queryFilter(filter))
+            .populate({ path:'category', match: categoryFilter(filter) })
+            .skip(page*size)
+            .limit(size);
+        const count = this.Article.count();
         return Promise
         .all([query, count])
-        .then(([articles, [totalSize]]) => {
-            // articles = articles.map(a => new this.Article(a));
-            return { articles, totalSize: get(totalSize, 'value', 0) };
+        .then(([articles, totalSize]) => {
+            return { 
+                articles: _filter(articles, 'category'), // remove results withiout category.
+                totalSize
+            };
         });
     }
     
