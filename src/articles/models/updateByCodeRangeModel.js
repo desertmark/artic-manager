@@ -1,7 +1,8 @@
+const { parseCode } = require('../articles-utils');
 module.exports = class UpdateByCodeRangeModel {
     constructor(obj = {}) {
-        this.from = obj.from;
-        this.to = obj.to;
+        this.from = parseCode(obj.from);
+        this.to = parseCode(obj.to);
         this.fields = obj.fields;
     }
 
