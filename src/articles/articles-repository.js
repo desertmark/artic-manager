@@ -1,6 +1,7 @@
 const _filter = require('lodash/filter');
 const { queryFilter, categoryFilter } = require('./articles-filter-factory');
 const MongooseError = require('../util/errors').MongooseError;
+const { get, omit } = require('lodash');
 class ArticleRepository {
     constructor(opts) {
         this.Article = opts.Article;
@@ -55,12 +56,33 @@ class ArticleRepository {
      */
     updateArticle(article) {
         return this.Article.findByIdAndUpdate(article._id, { $set: article })
-        .catch(err => new MongooseError(err));
+        .catch(err => {
+            throw new MongooseError(err);
+        });
     }
     
     updateMany(filter, query) {
         return this.Article.updateMany(filter, query, {upsert: false})
-        .catch(err => new MongooseError(err));
+        .catch(err => {
+            throw new MongooseError(err);
+        });
+    }
+
+    updateByCodeRange(model) {
+        const percentage = get(model, 'fields.price.percentage');
+        const absolute = get(model, 'fields.price.absolute');
+        const filter = { 
+            code: { 
+                $gte: model.from, 
+                $lte: model.to 
+            } 
+        };
+        const query = { 
+            $set: omit(model.fields, 'price'),
+        };
+        if(percentage) query.$mul = { listPrice: 1 + percentage };
+        if(absolute) query.$inc = { listPrice: absolute };
+        return this.updateMany(filter, query);
     }
 
     /**

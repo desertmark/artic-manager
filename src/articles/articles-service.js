@@ -1,5 +1,5 @@
 const roleEnum = require('../users/roles-enum');
-const _ = require('lodash');
+const { pick, intersection, get } = require('lodash');
 const { BusinessError, InternalServerError } = require('../util/errors');
 const { UpdateByCodeRangeModel, GuidoliArticle } = require('./models/');
 
@@ -14,7 +14,7 @@ class ArticleService {
     findById(id) {
         return this.articleRepository.findById(id).then(article => {
             let fieldsToPick = this.getAllowedFields(null);
-            return fieldsToPick ? _.pick(article, fieldsToPick) : article;
+            return fieldsToPick ? pick(article, fieldsToPick) : article;
         });
     }
     
@@ -29,7 +29,7 @@ class ArticleService {
     listArticles(page, size, filter = {}, fields = null) {
         return this.articleRepository.listArticles(page, size, filter).then(queryResult => {
             let fieldsToPick = this.getAllowedFields(fields);
-            queryResult.articles = fieldsToPick ? queryResult.articles.map(art => _.pick(art, fieldsToPick)) : queryResult.articles;
+            queryResult.articles = fieldsToPick ? queryResult.articles.map(art => pick(art, fieldsToPick)) : queryResult.articles;
             return queryResult;
         });
     }
@@ -63,7 +63,10 @@ class ArticleService {
      *  }
      * }
      * `
-     * @param {UpdateByCodeRangeModel} model 
+     * @param {UpdateByCodeRangeModel} model
+     * @param {any} model.price.percentage if especified, it will increase the price of the articles with the given percentage. 
+     * i.e: 10 --> will increace price in 10%
+     * @param {any} model.price.absolute if especified, it will increase the price of the articles with the given value.
      */
     updateByCodeRange(model) {
         if(!(model instanceof UpdateByCodeRangeModel)) {
@@ -72,11 +75,7 @@ class ArticleService {
         if(!model.isValid()) {
             return Promise.reject(new BusinessError('Invalid Model. Please specify from, to and what fields to update along with the values.'))
         }
-        const codeFrom = model.from;
-        const codeTo = model.to;
-        const filter = {code:{$gte: codeFrom,$lte: codeTo}};
-        const query = {$set: model.fields};
-        return this.articleRepository.updateMany(filter, query);
+        return this.articleRepository.updateByCodeRange(model);
     }
 
     /**
@@ -188,10 +187,10 @@ class ArticleService {
     getAllowedFields(fields) {
         let fieldsToPick;
         if(!this.currentUser) {
-            return fieldsToPick = fields ? _.intersection(this.anonymouseAllowedFields, fields) : this.anonymouseAllowedFields;
+            return fieldsToPick = fields ? intersection(this.anonymouseAllowedFields, fields) : this.anonymouseAllowedFields;
         } else {
             if(this.currentUser.role === roleEnum.USER) {
-                return fieldsToPick = fields ? _.intersection(this.userAllowedFields, fields) : this.userAllowedFields;
+                return fieldsToPick = fields ? intersection(this.userAllowedFields, fields) : this.userAllowedFields;
             }
         }
         fieldsToPick = fields;
