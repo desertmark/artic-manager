@@ -71,12 +71,12 @@ class ArticlesController {
         if(bulkFile) {
             this.fileService.parseCsvFromFile(bulkFile).then(json =>{
                 return this.articleService.updateBatch(json).then(articles => {
-                    console.log(`PUT: Articles, By File. ${articles.length} articles processed.`);
+                    console.log(`PATCH: Articles, By File. ${articles.length} articles processed.`);
                     res.send({processed: articles.length});
                 });
             })
             .catch(err => {
-                console.error(`PUT: Articles By File`, err);
+                console.error(`PATCH: Articles By File`, err);
                 res.status(500).send(err.toObject() || err.message);
              });
             return;
@@ -87,11 +87,11 @@ class ArticlesController {
             const model = new UpdateByCodeRangeModel(req.body);
             this.articleService.updateByCodeRange(model)
             .then(articles => {
-                console.log('PUT: Articles By Code Range', articles);
+                console.log('PATCH: Articles By Code Range', articles);
                 res.send(articles);
             })
             .catch(err => {
-                console.error('PUT: Articles By Code Range', err);
+                console.error('PATCH: Articles By Code Range', err);
                 res.status(err.status).send(err.toObject());
             });
         } catch(error) {
