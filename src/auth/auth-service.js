@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const config = require('../config/config.js');
 const jwt = require('jsonwebtoken');
-const BusinessError = require('../util/errors').BusinessError;
+const ValidationError = require('../util/errors').ValidationError;
 
 class AuthService {
     constructor(opts) {
@@ -79,7 +79,7 @@ class AuthService {
 
     passwordUpdate(model) {
         if(model.newPassword !== model.confirmPassword) {
-            return Promise.reject(new BusinessError(`New Password and confimation don't match.`));
+            return Promise.reject(new ValidationError(`New Password and confimation don't match.`));
         }
         return AuthService.comparePassword(model.oldPassword, this.currentUser.passwordHash).then(isMatch => {
             if(!isMatch) {

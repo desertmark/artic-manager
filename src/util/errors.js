@@ -4,14 +4,14 @@ Error.prototype.toObject = function() {
     }
 }
 
-class BusinessError extends Error {
-    constructor(message = 'Business Error', status = 422, error = null) {
-        super(message);
+class ApplicationError extends Error {
+    constructor(message = 'Application Error', status, error = null) {
+        super();
         this.message = message;
         this.status = status;
         this.error = error;
+        this.name = 'ApplicationError'
     }
-
     toObject() {
         return {
             message: this.message,
@@ -21,18 +21,19 @@ class BusinessError extends Error {
     }
 }
 
-class MongooseError extends BusinessError {
+class ValidationError extends ApplicationError {
+    constructor(message = 'Validation Error', status = 422, error = null) {
+        super(message, status, error);
+        this.name = "ValidationError"
+    }
+}
+
+class DatabaseError extends ApplicationError {
     constructor(error = null){
         super('Mongoose Error', 500, error);
     }
 }
 
-class InternalServerError extends Error {
-    constructor(message, error = null){
-        super(message, 500, error);
-    }
-}
-
-module.exports.BusinessError = BusinessError;
-module.exports.MongooseError = MongooseError;
-module.exports.InternalServerError = InternalServerError;
+module.exports.ValidationError = ValidationError;
+module.exports.DatabaseError = DatabaseError;
+module.exports.ApplicationError = ApplicationError;

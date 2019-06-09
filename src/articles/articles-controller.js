@@ -8,7 +8,8 @@ class ArticlesController {
         this.getById    = this.getById.bind(this);
         this.post       = this.post.bind(this);
         this.postSearch = this.postSearch.bind(this);
-        this.put        = this.put.bind(this);
+        this.patch      = this.patch.bind(this);
+        this.patchById  = this.patchById.bind(this);
         this.delete     = this.delete.bind(this);
     }
 
@@ -52,7 +53,7 @@ class ArticlesController {
         });
     }
     
-    putById(req, res) {
+    patchById(req, res) {
         req.body.id = res.locals.article._id;
         this.articleService.updateArticle(req.body)
         .then(article => {
@@ -65,7 +66,7 @@ class ArticlesController {
         });
     }
     
-    put(req, res) {
+    patch(req, res) {
         const bulkFile = req.files ? req.files.bulk : null;
         if(bulkFile) {
             this.fileService.parseCsvFromFile(bulkFile).then(json =>{
@@ -80,9 +81,10 @@ class ArticlesController {
              });
             return;
         }
-        const model = new UpdateByCodeRangeModel(req.body);
-        if(model.isValid()) {
-            // update by code range
+        
+        // update by code range
+        try {
+            const model = new UpdateByCodeRangeModel(req.body);
             this.articleService.updateByCodeRange(model)
             .then(articles => {
                 console.log('PUT: Articles By Code Range', articles);
@@ -92,9 +94,9 @@ class ArticlesController {
                 console.error('PUT: Articles By Code Range', err);
                 res.status(err.status).send(err.toObject());
             });
-            return;
+        } catch(error) {
+            res.status(error.status || 500).send(error.toObject());
         }
-        res.sendStatus(400);       
     }
 
     delete(req, res) {

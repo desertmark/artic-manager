@@ -1,6 +1,6 @@
 const _filter = require('lodash/filter');
 const { queryFilter, categoryFilter } = require('./articles-filter-factory');
-const MongooseError = require('../util/errors').MongooseError;
+const { DatabaseError } = require('../util/errors');
 const { get, omit, isEmpty } = require('lodash');
 class ArticleRepository {
     constructor(opts) {
@@ -46,7 +46,7 @@ class ArticleRepository {
     createArticle(article) {
         return this.Article
         .create(article)
-        .catch(err => new MongooseError(err));
+        .catch(err => new DatabaseError(err));
     }
     
     
@@ -57,14 +57,14 @@ class ArticleRepository {
     updateArticle(article) {
         return this.Article.findByIdAndUpdate(article._id, { $set: article })
         .catch(err => {
-            throw new MongooseError(err);
+            throw new DatabaseError(err);
         });
     }
     
     updateMany(filter, query) {
         return this.Article.updateMany(filter, query, {upsert: false})
         .catch(err => {
-            throw new MongooseError(err);
+            throw new DatabaseError(err);
         });
     }
 
@@ -91,7 +91,7 @@ class ArticleRepository {
      */
     removeArticle(id) {
         return this.Article.findByIdAndRemove(id)
-        .catch(err => new MongooseError(err));
+        .catch(err => new DatabaseError(err));
     }
 }
 

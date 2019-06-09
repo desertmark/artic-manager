@@ -1,6 +1,6 @@
 const roleEnum = require('../users/roles-enum');
 const { pick, intersection, get } = require('lodash');
-const { BusinessError, InternalServerError } = require('../util/errors');
+const { ValidationError } = require('../util/errors');
 const { UpdateByCodeRangeModel, GuidoliArticle } = require('./models/');
 
 class ArticleService {
@@ -40,7 +40,7 @@ class ArticleService {
         if(article) {
             return this.articleRepository.createArticle(article)
         } else {
-            return Promise.reject(new BusinessError('Invalid Article'));
+            return Promise.reject(new ValidationError('Invalid Article'));
         }
     }
     
@@ -70,10 +70,7 @@ class ArticleService {
      */
     updateByCodeRange(model) {
         if(!(model instanceof UpdateByCodeRangeModel)) {
-            throw new InternalServerError('updateByCodeRange: expected UpdateByCodeRangeModel as a parameter.');
-        }
-        if(!model.isValid()) {
-            return Promise.reject(new BusinessError('Invalid Model. Please specify from, to and what fields to update along with the values.'))
+            throw new ValidationError('Expected UpdateByCodeRangeModel instance as a parameter.');
         }
         return this.articleRepository.updateByCodeRange(model);
     }

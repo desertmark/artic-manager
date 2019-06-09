@@ -11,8 +11,8 @@ const ctrlBuilder = awilixExpress
 .get('/:id', 'getById', {before: passport.authenticateJwt([USER, ADMIN])})
 .post('/', 'post', {before: passport.authenticateJwt(ADMIN)})
 .post('/search', 'postSearch',{before: [passport.authenticateJwt(ANONYMOUS), middlewares.parseFieldsToObject]})
-.put('/','put', {before: passport.authenticateJwt(ADMIN)})
-.put('/:id', 'putById', {before: passport.authenticateJwt(ADMIN)})
+.patch('/','patch', {before: passport.authenticateJwt(ADMIN)})
+.patch('/:id', 'patchById', {before: passport.authenticateJwt(ADMIN)})
 .delete('/:id', 'delete', {before: passport.authenticateJwt(ADMIN)});
 
 const router = awilixExpress.controller(ctrlBuilder);

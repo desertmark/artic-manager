@@ -1,15 +1,23 @@
 const { parseCode } = require('../articles-utils');
+const { ValidationError } = require('../../util/errors');
 module.exports = class UpdateByCodeRangeModel {
-    constructor(obj = {}) {
-        this.from = parseCode(obj.from);
-        this.to = parseCode(obj.to);
-        this.fields = obj.fields;
+    constructor(model = {}) {
+        try {
+            this.from = parseCode(model.from);
+            this.to = parseCode(model.to);
+            this.fields = model.fields;
+            if(!this.isValid(model)) {
+                throw new ValidationError('Invalid Model. Please specify from, to and what fields to update along with the values.');
+            }
+        } catch(error) {
+            throw new ValidationError('Invalid "from" and "to" codes.');
+        }
     }
 
-    isValid() {
-        return this.fields
-            && Number.isInteger(this.from)
-            && Number.isInteger(this.to)
-            && typeof this.fields === 'object'
+    isValid(model) {
+        return model.fields
+            && Number.isInteger(model.from)
+            && Number.isInteger(model.to)
+            && typeof model.fields === 'object'
     }
 }
