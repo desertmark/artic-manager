@@ -1,7 +1,7 @@
 const _filter = require('lodash/filter');
 const { queryFilter, categoryFilter } = require('./articles-filter-factory');
 const MongooseError = require('../util/errors').MongooseError;
-const { get, omit } = require('lodash');
+const { get, omit, isEmpty } = require('lodash');
 class ArticleRepository {
     constructor(opts) {
         this.Article = opts.Article;
@@ -71,15 +71,15 @@ class ArticleRepository {
     updateByCodeRange(model) {
         const percentage = get(model, 'fields.price.percentage');
         const absolute = get(model, 'fields.price.absolute');
+        const fields = omit(model.fields, 'price');
         const filter = { 
             code: { 
                 $gte: model.from, 
                 $lte: model.to 
             } 
         };
-        const query = { 
-            $set: omit(model.fields, 'price'),
-        };
+        const query = {};
+        if(!isEmpty(fields)) query.$set = fields;
         if(percentage) query.$mul = { listPrice: 1 + percentage };
         if(absolute) query.$inc = { listPrice: absolute };
         return this.updateMany(filter, query);
