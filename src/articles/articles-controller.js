@@ -95,6 +95,7 @@ class ArticlesController {
                 res.status(err.status).send(err.toObject());
             });
         } catch(error) {
+            console.error('PATCH: Articles By Code Range', error);
             res.status(error.status || 500).send(error.toObject());
         }
     }

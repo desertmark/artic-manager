@@ -10,7 +10,7 @@ module.exports = class UpdateByCodeRangeModel {
                 throw new ValidationError('Invalid Model. Please specify from, to and what fields to update along with the values.');
             }
         } catch(error) {
-            throw new ValidationError('Invalid "from" and "to" codes.');
+            throw new ValidationError('Invalid "from" and "to" codes.', 422, error);
         }
     }
 
