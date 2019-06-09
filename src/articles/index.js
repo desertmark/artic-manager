@@ -1,23 +1,22 @@
 const middlewares = require('./articles-middlewares');
-const awilix = require('awilix');
 const awilixExpress = require('awilix-express');
 const ArticlesController = require('./articles-controller');
 const passport = require('passport');
-const roleEnum = require('../users/roles-enum');
+const { ANONYMOUS, ADMIN, USER } = require('../users/roles-enum');
 
 const ctrlBuilder = awilixExpress
 .createController(ArticlesController)
 .prefix('/articles')
-.get('/', 'get',{before: [passport.authenticateJwt(roleEnum.ANONYMOUS),middlewares.parseFieldsToArray]})
-.get('/:id', 'getById')
-.post('/', 'post')
-.post('/search', 'postSearch',{before: [passport.authenticateJwt(roleEnum.ANONYMOUS), middlewares.parseFieldsToObject]})
-.put('/','put')
-.put('/:id', 'putById')
-.delete('/:id', 'delete');
+.get('/', 'get',{before: [passport.authenticateJwt(ANONYMOUS),middlewares.parseFieldsToArray]})
+.get('/:id', 'getById', {before: passport.authenticateJwt([USER, ADMIN])})
+.post('/', 'post', {before: passport.authenticateJwt(ADMIN)})
+.post('/search', 'postSearch',{before: [passport.authenticateJwt(ANONYMOUS), middlewares.parseFieldsToObject]})
+.put('/','put', {before: passport.authenticateJwt(ADMIN)})
+.put('/:id', 'putById', {before: passport.authenticateJwt(ADMIN)})
+.delete('/:id', 'delete', {before: passport.authenticateJwt(ADMIN)});
 
 const router = awilixExpress.controller(ctrlBuilder);
-router.param('id', passport.authenticateJwt(roleEnum.ANONYMOUS));
+router.param('id', passport.authenticateJwt(ANONYMOUS));
 router.param('id', middlewares.findById);
 
 module.exports = router;
