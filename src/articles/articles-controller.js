@@ -69,7 +69,7 @@ class ArticlesController {
     patch(req, res) {
         const bulkFile = req.files ? req.files.bulk : null;
         if(bulkFile) {
-            this.fileService.parseCsvFromFile(bulkFile).then(json =>{
+            this.fileService.parseCsvFromStream(bulkFile).then(json =>{
                 return this.articleService.updateBatch(json).then(articles => {
                     console.log(`PATCH: Articles, By File. ${articles.length} articles processed.`);
                     res.send({processed: articles.length});
