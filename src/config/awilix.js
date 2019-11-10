@@ -11,6 +11,7 @@ const Article               = require('../articles/articles');
 const ArticleRepository     = require('../articles/articles-repository');
 const ArticleService        = require('../articles/articles-service');
 const ArticleController     = require('../articles/articles-controller');
+const UpdateStatusService   = require('../articles/update-status-service');
 
 const Category              = require('../categories/categories');
 const CategoriesRepository  = require('../categories/categories-repository');
@@ -38,6 +39,7 @@ function getContainer() {
         articleRepository:      awilix.asClass(ArticleRepository).scoped(),
         articleController:      awilix.asClass(ArticleController).scoped(),
         articleService:         awilix.asClass(ArticleService).scoped(),
+        statusService:          awilix.asClass(UpdateStatusService).singleton(),
 
         Category:               awilix.asValue(Category),
         categoriesRepository:   awilix.asClass(CategoriesRepository).scoped(),

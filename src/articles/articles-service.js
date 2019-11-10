@@ -7,6 +7,7 @@ class ArticleService {
     constructor(opts) {
         this.currentUser = opts.currentUser;
         this.articleRepository = opts.articleRepository;
+        this.statusService = opts.statusService;
         this.anonymouseAllowedFields = ["_id", "code", "codeString", "category", "description"];
         this.userAllowedFields = ["_id", "code", "codeString", "category", "description", "price", "cardPrice"];
     }
@@ -82,6 +83,7 @@ class ArticleService {
      */
     updateBatch(articles) {
         let promises = [];
+        this.statusService.startProgress(articles.length);
         articles.forEach(article => {
             // map raw json with changes to a type.
             const guidoliArticle = new GuidoliArticle(article);
@@ -98,6 +100,8 @@ class ArticleService {
                     .catch(err => {
                         console.error('Batch Update fail for article', doc.code);
                         return err;
+                    }).finally(() => {
+                        this.statusService.updateStatus();
                     });
                 }
             });
@@ -110,6 +114,8 @@ class ArticleService {
         .catch(err => {
             console.log('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.');
             return err;
+        }).finally(() => {
+            this.statusService.clear();
         });
     }
 
