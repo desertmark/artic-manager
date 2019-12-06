@@ -14,6 +14,10 @@ module.exports = class UpdateStatusService {
         this.state = new State();
     }
 
+    get inProgress() {
+        return this.state.inProgress;
+    }
+
     startProgress(total) {
         this.state.total = total;
         this.state.inProgress = true;
@@ -21,7 +25,7 @@ module.exports = class UpdateStatusService {
 
     updateStatus() {
         this.state.processed++;
-        this.completed = (this.processed / this.total ) * 100;
+        this.state.completed = (this.state.processed / this.state.total ) * 100;
     }
 
     getStatus() {

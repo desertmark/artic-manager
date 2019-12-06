@@ -83,7 +83,6 @@ class ArticleService {
      */
     updateBatch(articles) {
         let promises = [];
-        this.statusService.startProgress(articles.length);
         articles.forEach(article => {
             // map raw json with changes to a type.
             const guidoliArticle = new GuidoliArticle(article);
@@ -114,8 +113,6 @@ class ArticleService {
         .catch(err => {
             console.log('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.');
             return err;
-        }).finally(() => {
-            this.statusService.clear();
         });
     }
 
@@ -206,6 +203,37 @@ class ArticleService {
      */
     parseCodeToInt(code) {
         return parseInt(code.replace(/[.]/g,''));
+    }
+
+    updateByChunks(articles) {
+        this.statusService.startProgress(articles.length)
+        const chunks = this.getChuncks(articles);
+        this.processChunks(chunks);
+    }
+
+    getChuncks(array, size = 10) {
+        const chunks = [];
+        for (let i = 0; i< array.length; i= i + size) {
+            let temp = [];
+            for (let j = i; (j < i+size && j < array.length); j++) {
+                temp.push(array[j]);
+            }
+            chunks.push(temp);
+        }
+        return chunks;
+    }
+
+    processChunks(chunks) {
+        return new Promise(res => {
+            this.updateBatch(chunks.pop()).then(() => {
+                if (chunks.length) {
+                    setImmediate(() => this.processChunks(chunks));
+                } else {
+                    res();
+                    this.statusService.clear();
+                }
+            });
+        });
     }
 }
 

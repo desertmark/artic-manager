@@ -7,7 +7,7 @@ const { ANONYMOUS, ADMIN, USER } = require('../users/roles-enum');
 const ctrlBuilder = awilixExpress
 .createController(ArticlesController)
 .prefix('/articles')
-.get('/status', 'status')
+.get('/status', 'status', {before: passport.authenticateJwt(ADMIN)})
 .get('/', 'get',{before: [passport.authenticateJwt(ANONYMOUS),middlewares.parseFieldsToArray]})
 .get('/:id', 'getById', {before: passport.authenticateJwt([USER, ADMIN])})
 .post('/', 'post', {before: passport.authenticateJwt(ADMIN)})
