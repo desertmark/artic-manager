@@ -82,6 +82,7 @@ jobs:
           name: Deploy Master to Heroku
           command: |
             git pull origin $CIRCLE_BRANCH &&
+            echo deploying $(cat package.json | grep version) &&
             git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 
 workflows:
