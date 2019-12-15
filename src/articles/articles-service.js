@@ -92,14 +92,15 @@ class ArticleService {
                 if(articleToUpdate) {
                     const updatedArticle = this.updateArticleFromGuidoliArticle(articleToUpdate, guidoliArticle);
                     return updatedArticle.save()
-                    .then(doc => {
-                        console.log('Batch Update succesfull for article', doc.code);
-                        return doc;
-                    })
-                    .catch(err => {
-                        console.error('Batch Update fail for article', doc.code);
-                        return err;
-                    }).finally(() => {
+                    // .then(doc => {
+                    //     console.log('Batch Update succesfull for article', doc.code);
+                    //     return doc;
+                    // })
+                    // .catch(err => {
+                    //     console.error('Batch Update fail for article', doc.code);
+                    //     return err;
+                    // })
+                    .finally(() => {
                         this.statusService.updateStatus();
                     });
                 }
