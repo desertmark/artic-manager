@@ -26,6 +26,7 @@ module.exports = class UpdateStatusService {
     updateStatus() {
         this.state.processed++;
         this.state.completed = (this.state.processed / this.state.total ) * 100;
+        console.log('update status', this.getStatus());
     }
 
     getStatus() {
