@@ -7,6 +7,7 @@ class ArticleService {
     constructor(opts) {
         this.currentUser = opts.currentUser;
         this.articleRepository = opts.articleRepository;
+        this.statusService = opts.statusService;
         this.anonymouseAllowedFields = ["_id", "code", "codeString", "category", "description"];
         this.userAllowedFields = ["_id", "code", "codeString", "category", "description", "price", "cardPrice"];
     }
@@ -98,6 +99,8 @@ class ArticleService {
                     .catch(err => {
                         console.error('Batch Update fail for article', doc.code);
                         return err;
+                    }).finally(() => {
+                        this.statusService.updateStatus();
                     });
                 }
             });
@@ -200,6 +203,37 @@ class ArticleService {
      */
     parseCodeToInt(code) {
         return parseInt(code.replace(/[.]/g,''));
+    }
+
+    updateByChunks(articles) {
+        this.statusService.startProgress(articles.length)
+        const chunks = this.getChuncks(articles);
+        this.processChunks(chunks);
+    }
+
+    getChuncks(array, size = 10) {
+        const chunks = [];
+        for (let i = 0; i< array.length; i= i + size) {
+            let temp = [];
+            for (let j = i; (j < i+size && j < array.length); j++) {
+                temp.push(array[j]);
+            }
+            chunks.push(temp);
+        }
+        return chunks;
+    }
+
+    processChunks(chunks) {
+        return new Promise(res => {
+            this.updateBatch(chunks.pop()).then(() => {
+                if (chunks.length) {
+                    setImmediate(() => this.processChunks(chunks));
+                } else {
+                    res();
+                    this.statusService.clear();
+                }
+            });
+        });
     }
 }
 

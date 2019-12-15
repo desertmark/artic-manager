@@ -3,6 +3,7 @@ class ArticlesController {
     constructor(opts) {
         this.articleService = opts.articleService;
         this.fileService = opts.fileService;
+        this.statusService = opts.statusService;
 
         this.get        = this.get.bind(this);
         this.getById    = this.getById.bind(this);
@@ -69,17 +70,20 @@ class ArticlesController {
     patch(req, res) {
         const bulkFile = req.files ? req.files.bulk : null;
         if(bulkFile) {
-            this.fileService.parseCsvFromStream(bulkFile).then(json =>{
-                return this.articleService.updateBatch(json).then(articles => {
-                    console.log(`PATCH: Articles, By File. ${articles.length} articles processed.`);
-                    res.send({processed: articles.length});
-                });
-            })
-            .catch(err => {
-                console.error(`PATCH: Articles By File`, err);
-                res.status(500).send(err.toObject() || err.message);
-             });
-            return;
+            if (!this.statusService.inProgress) {
+                this.fileService.parseCsvFromStream(bulkFile).then(json =>{
+                    this.articleService.updateByChunks(json);
+                    console.log(`PATCH: Articles, By File. ${json.length} articles to process.`);
+                    res.sendStatus(204);
+                })
+                .catch(err => {
+                    console.error(`PATCH: Articles By File`, err);
+                    res.status(500).send(err.toObject() || err.message);
+                 });
+                return;
+            } else {
+                res.sendStatus(409);
+            }
         }
         
         // update by code range
@@ -110,6 +114,11 @@ class ArticlesController {
             console.error('DELETE: Article', err);
             res.status(err.status).send(err);
         });
+    }
+
+    status(req, res) {
+        const status = this.statusService.getStatus();
+        res.json(status);
     }
 }
 
