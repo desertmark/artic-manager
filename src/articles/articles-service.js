@@ -112,7 +112,7 @@ class ArticleService {
             return docs;
         })
         .catch(err => {
-            console.log('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.', err);
+            console.error('updateBatch (Articles): something happend while updating the articles. Is possible some of them were not correctly updated.', err);
             return err;
         });
     }
