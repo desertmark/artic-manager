@@ -1,6 +1,6 @@
 {
   "name": "artic-manager",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Articles Manager REST API",
   "main": "index.js",
   "engine": {
