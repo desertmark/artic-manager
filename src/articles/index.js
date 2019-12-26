@@ -8,7 +8,7 @@ const ctrlBuilder = awilixExpress
 .createController(ArticlesController)
 .prefix('/articles')
 .get('/status', 'status', {before: passport.authenticateJwt(ADMIN)})
-.get('/', 'get',{before: [passport.authenticateJwt(ANONYMOUS),middlewares.parseFieldsToArray]})
+.get('/', 'get',{before: [passport.authenticateJwt(ANONYMOUS),middlewares.parseFieldsToArray, middlewares.parseFilterToObject]})
 .get('/:id', 'getById', {before: passport.authenticateJwt([USER, ADMIN])})
 .post('/', 'post', {before: passport.authenticateJwt(ADMIN)})
 .post('/search', 'postSearch',{before: [passport.authenticateJwt(ANONYMOUS), middlewares.parseFieldsToObject]})
