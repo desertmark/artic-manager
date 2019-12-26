@@ -26,13 +26,13 @@ class ArticleRepository {
     listArticles(page, size, filter = {}) {
         page = parseInt(page) || 0;
         size = parseInt(size) || 20;
-        
+        const mongoQueryFilter = queryFilter(filter);
         const query = this.Article
-            .find(queryFilter(filter))
+            .find(mongoQueryFilter)
             .populate({ path:'category', match: categoryFilter(filter) })
             .skip(page*size)
             .limit(size);
-        const count = this.Article.count();
+        const count = this.Article.count(mongoQueryFilter);
         return Promise
         .all([query, count])
         .then(([articles, totalSize]) => {
