@@ -11,17 +11,24 @@ module.exports = (passport, container) => {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKeyProvider: (request, rawJwtToken, done) => {
             const payload = jwt.decode(rawJwtToken);
-            const userId = payload._id;
-            userService.findById(userId).then(user => {
-                done(null, config.secret + user.nonce);
-            })
-            .catch(error => {
+            if (payload) {
+                const userId = payload._id;
+                userService.findById(userId).then(user => {
+                    done(null, config.secret + user.nonce);
+                })
+                .catch(error => {
+                    done({
+                        status: 500,
+                        message: 'Mongoose Error',
+                        error
+                    }, null);
+                });
+            } else {
                 done({
-                    status: 500,
-                    message: 'Mongoose Error',
-                    error
+                    status: 401,
+                    message: 'Invalid Token',
                 }, null);
-            });
+            }
         },
     }
     
