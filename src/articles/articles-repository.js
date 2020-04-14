@@ -27,19 +27,35 @@ class ArticleRepository {
         page = parseInt(page) || 0;
         size = parseInt(size) || 20;
         const mongoQueryFilter = queryFilter(filter);
-        const query = this.Article
-            .find(mongoQueryFilter)
-            .populate({ path:'category', match: categoryFilter(filter) })
-            .skip(page*size)
-            .limit(size);
-        const count = this.Article.count(mongoQueryFilter);
-        return Promise
-        .all([query, count])
-        .then(([articles, totalSize]) => {
-            return { 
-                articles: _filter(articles, 'category'), // remove results withiout category.
-                totalSize
-            };
+        const commonPipeline = [
+            { $match: mongoQueryFilter },	
+            {	
+                $lookup: {	
+                    from: 'categories',	
+                    localField: 'category',	
+                    foreignField: '_id',	
+                    as: 'category'	
+                }	
+            },	
+            { $unwind: '$category' },	
+            { $match:  categoryFilter(filter) },
+        ];
+        const countPipeline = commonPipeline.concat([{ $count: "value" }]);
+        const queryPipeline = commonPipeline.concat([{ $skip: page*size }, { $limit: size }]);
+        const mainPipeline = [
+            {
+                $facet: {
+                    total: countPipeline,
+                    rows: queryPipeline,
+                }
+            },
+        ]
+        return this.Article.aggregate(mainPipeline).then(
+            ([result]) => {
+                return {
+                    articles: result.rows,
+                    totalSize: get(result,'total[0].value', 0),
+                }
         });
     }
     

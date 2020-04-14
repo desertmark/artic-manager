@@ -22,7 +22,8 @@
             "program": "${workspaceFolder}/src/index.js",
             "restart": true,
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "env": { "NODE_ENV": "qa" }
         },
         {
             "type": "node",
