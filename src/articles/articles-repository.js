@@ -5,6 +5,7 @@ const { get, omit, isEmpty } = require('lodash');
 class ArticleRepository {
     constructor(opts) {
         this.Article = opts.Article;
+        this.Category = opts.Category;
     }
 
     findById(id) {
@@ -53,9 +54,18 @@ class ArticleRepository {
         return this.Article.aggregate(mainPipeline).then(
             ([result]) => {
                 return {
-                    articles: result.rows,
+                    articles: this.toArticles(result.rows),
                     totalSize: get(result,'total[0].value', 0),
                 }
+        });
+    }
+
+    toArticles(rows) {
+        return rows.map(row => {
+            const category = new this.Category(row.category);
+            const article = new this.Article(row);
+            article.category = category;
+            return article;
         });
     }
     
