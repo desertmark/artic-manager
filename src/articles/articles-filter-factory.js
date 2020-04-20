@@ -11,8 +11,8 @@ function queryFilter(filter) {
 function categoryFilter(filter) {
     let categoryFilter = {};
     if(filter.category) {
-        if(filter.category._id) categoryFilter._id = { $eq: mongoose.mongo.ObjectId(filter.category._id) };
-        if(filter.category.description) categoryFilter.description = { $regex: `.*${filter.category.description}.*`, $options: 'i' };
+        if(filter.category._id) categoryFilter['category._id'] = { $eq: mongoose.mongo.ObjectId(filter.category._id) };
+        if(filter.category.description) categoryFilter['category.description'] = { $regex: `.*${filter.category.description}.*`, $options: 'i' };
     }
     return categoryFilter;
 }

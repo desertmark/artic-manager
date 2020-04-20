@@ -132,9 +132,27 @@ class ArticleService {
     updateArticleFromGuidoliArticle(articleToUpdate, guidoliArticle) {
         articleToUpdate.listPrice = guidoliArticle.precio;
         const bonificacion = this.findArticleDiscount(articleToUpdate, 'Bonificacion');
+        if(bonificacion) { 
+            bonificacion.amount = guidoliArticle.bonificacion;
+        } else {
+            if (guidoliArticle.bonificacion) {
+                articleToUpdate.discounts.push({
+                    description: 'Bonificacion',
+                    amount: guidoliArticle.bonificacion
+                });
+            }
+        }
         const bonificacion2 = this.findArticleDiscount(articleToUpdate, 'Bonificacion 2')
-        if(bonificacion) bonificacion.amount = guidoliArticle.bonificacion;
-        if(bonificacion2) bonificacion2.amount = guidoliArticle.bonificacion2;
+        if(bonificacion2) { 
+            bonificacion2.amount = guidoliArticle.bonificacion2;
+        } else {
+            if (guidoliArticle.bonificacion2) {
+                articleToUpdate.discounts.push({
+                    description: 'Bonificacion 2',
+                    amount: guidoliArticle.bonificacion
+                });
+            }
+        }
         return articleToUpdate;
     }
     

@@ -1,6 +1,6 @@
 {
   "name": "artic-manager",
-  "version": "0.0.35",
+  "version": "0.0.37",
   "description": "Articles Manager REST API",
   "main": "index.js",
   "engine": {
@@ -14,6 +14,7 @@
     "docker:build": "docker-compose build",
     "docker:start": "docker-compose -f docker-local-override.yml up",
     "docker:localdb": "docker run -d -p 27017:27017 --name artic-manager-db mongo",
+    "docker:dbclient": "docker exec -it artic-manager-db bash",
     "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",
