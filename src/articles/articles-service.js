@@ -2,6 +2,7 @@ const roleEnum = require('../users/roles-enum');
 const { pick, intersection, get } = require('lodash');
 const { ValidationError } = require('../util/errors');
 const { UpdateByCodeRangeModel, GuidoliArticle } = require('./models/');
+const articleUtils = require('../util/articles');
 
 class ArticleService {
     constructor(opts) {
@@ -27,8 +28,8 @@ class ArticleService {
      * @param {Object | String} fields fields for the query to return. If not passed returns all of them. Pass it like ``{fieldName:1}`` or ``"fieldName1 fieldName2"``.
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
-    listArticles(page, size, filter = {}, fields = null) {
-        return this.articleRepository.listArticles(page, size, filter).then(queryResult => {
+    listArticles({page, size, sort, filter = {}, fields = null}) {
+        return this.articleRepository.listArticles(page, size, sort, filter).then(queryResult => {
             let fieldsToPick = this.getAllowedFields(fields);
             queryResult.articles = fieldsToPick ? queryResult.articles.map(art => pick(art, fieldsToPick)) : queryResult.articles;
             return queryResult;
@@ -39,7 +40,7 @@ class ArticleService {
         let article;
         article = this.articleFactory(articleJson);
         if(article) {
-            return this.articleRepository.createArticle(article)
+            return this.articleRepository.createArticle(article);
         } else {
             return Promise.reject(new ValidationError('Invalid Article'));
         }
@@ -197,6 +198,9 @@ class ArticleService {
             dolar: 0,
             category: model.categoryId
         }, model);
+        article.cost = articleUtils.cost(article.listPrice, article.vat, article.discounts);
+        article.price = articleUtils.price(article.cost, article.utility, article.transport);
+        article.cardPrice = articleUtils.cardPrice(article.price, article.card);
         delete model.categoryId;
         return article;
     }

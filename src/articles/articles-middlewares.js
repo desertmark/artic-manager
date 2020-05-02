@@ -1,7 +1,7 @@
 const articlesService = require('./articles-service');
 const mongodb = require("mongodb");
 const isValidObjectId = mongodb.ObjectID.isValid;
-const set = require('lodash/set');
+const { get, set } = require('lodash');
 
 function findById(req, res, next, id) {
     if (!isValidObjectId(id)) {
@@ -42,8 +42,8 @@ function parseFieldsToObject(req, res, next) {
 }
 
 function parseFieldsToArray(req, res, next) {
-    if (req.query && req.query.fields) {
-        res.locals.fields = req.query.fields.split(",");
+    if (get(req, 'query.fields')) {
+        set(res, 'locals.fields', req.query.fields.split(","))
     }
     next();
 }
@@ -62,7 +62,7 @@ function parseFilterToObject(req, res, next) {
 }
 
 function isArticleProperty(prop) {
-    return !['page','size','fields'].includes(prop);
+    return !['page','size','sort', 'fields'].includes(prop);
 }
 
 module.exports = {

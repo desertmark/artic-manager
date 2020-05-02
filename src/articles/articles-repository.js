@@ -24,7 +24,9 @@ class ArticleRepository {
      * @param {Object | String} fields fields for the query to return. If not passed returns all of them. Pass it like ``{fieldName:1}`` or ``"fieldName1 fieldName2"``.
      * @returns {DocumentQuery<Article>} DocumentQuery<Article>. call ``then`` to get results.
      */
-    listArticles(page, size, filter = {}) {
+    listArticles(page, size, sort = ['description', 'asc'], filter = {}) {
+        const sortField = sort[0];
+        const sortOrder = sort[1] === 'asc' ? 1 : -1;
         page = parseInt(page) || 0;
         size = parseInt(size) || 20;
         const mongoQueryFilter = queryFilter(filter);
@@ -40,6 +42,7 @@ class ArticleRepository {
             },	
             { $unwind: '$category' },	
             { $match:  categoryFilter(filter) },
+            { $sort: { [sortField]: sortOrder } }
         ];
         const countPipeline = commonPipeline.concat([{ $count: "value" }]);
         const queryPipeline = commonPipeline.concat([{ $skip: page*size }, { $limit: size }]);
@@ -72,7 +75,9 @@ class ArticleRepository {
     createArticle(article) {
         return this.Article
         .create(article)
-        .catch(err => new DatabaseError(err));
+        .catch(err => {
+            throw new DatabaseError(err);
+        });
     }
     
     

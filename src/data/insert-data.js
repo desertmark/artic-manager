@@ -1,7 +1,7 @@
 require('dotenv').config()
 console.log(process.env.NODE_ENV);
 const initMongoose = require('../config/mongoose');
-
+const articlesUtil = require('../util/articles');
 initMongoose();
 
 var   articlesJSON = require('./sanita.json');
@@ -156,8 +156,6 @@ function mapCategoryDescriptionToCategoryId(articles, categories) {
 
 function mapArticlesJSONToArticlesModel(articlesJSON) {
     return articlesJSON.map(art => {
-        delete art.price;
-        delete art.cost;
         art.codeString = art.code;
         art.code = parseInt(art.code.replace(/[.]/g,''));
         art.card = art.card/100;
@@ -182,6 +180,7 @@ function mapArticlesJSONToArticlesModel(articlesJSON) {
                 amount: art.cashDiscount2/100
             }
         ];
+        art.cardPrice = articlesUtil.cardPrice(art.price, art.card);
         return art;
     });
 }

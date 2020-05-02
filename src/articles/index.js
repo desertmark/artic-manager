@@ -3,12 +3,18 @@ const awilixExpress = require('awilix-express');
 const ArticlesController = require('./articles-controller');
 const passport = require('passport');
 const { ANONYMOUS, ADMIN, USER } = require('../users/roles-enum');
+const { parseSorting } = require('../util/middlewares');
 
 const ctrlBuilder = awilixExpress
 .createController(ArticlesController)
 .prefix('/articles')
 .get('/status', 'status', {before: passport.authenticateJwt(ADMIN)})
-.get('/', 'get',{before: [passport.authenticateJwt(ANONYMOUS),middlewares.parseFieldsToArray, middlewares.parseFilterToObject]})
+.get('/', 'get',{before: [
+    passport.authenticateJwt(ANONYMOUS),
+    middlewares.parseFieldsToArray,
+    middlewares.parseFilterToObject,
+    parseSorting,
+]})
 .get('/:id', 'getById', {before: passport.authenticateJwt([USER, ADMIN])})
 .post('/', 'post', {before: passport.authenticateJwt(ADMIN)})
 .post('/search', 'postSearch',{before: [passport.authenticateJwt(ANONYMOUS), middlewares.parseFieldsToObject]})
