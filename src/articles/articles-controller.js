@@ -15,7 +15,15 @@ class ArticlesController {
     }
 
     get(req, res) {
-        this.articleService.listArticles(req.query.page, req.query.size, res.locals.filter, res.locals.fields)
+        const { page, size } = req.query;
+        const { filter, fields, sort } = res.locals; // locals are set in middlewares
+        this.articleService.listArticles({
+            page,
+            size,
+            sort,
+            filter,
+            fields
+        })
         .then(queryResult => {
             console.log('GET: Articles', queryResult.articles.length);
             res.send(queryResult);
