@@ -15,6 +15,8 @@
     "docker:start": "docker-compose -f docker-local-override.yml up",
     "docker:localdb": "docker run -d -p 27017:27017 --name artic-manager-db mongo",
     "docker:dbclient": "docker exec -it artic-manager-db bash",
+    "transform": "node ./src/data/transform.js",
+    "transform:xls": "curl -F files[]='@./src/data/sanita.mdb' 'https://www.rebasedata.com/api/v1/convert?outputFormat=xlsx&errorResponse=zip' -o output.zip",
     "bulk": "node ./src/data/insert-data.js",
     "bulk:insert": "npm run bulk -- -action insertAll",
     "bulk:delete": "npm run bulk -- -action deleteAll",
@@ -51,6 +53,7 @@
   "devDependencies": {
     "dotenv": "^6.2.0",
     "jasmine": "^3.5.0",
+    "mdb-parse": "^1.0.4",
     "nodemon": "^1.19.4"
   }
 }
