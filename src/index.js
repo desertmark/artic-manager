@@ -1,6 +1,6 @@
 require('dotenv').config('../');
 const PORT_NUMBER       = process.env.PORT || 3001;
-const app               = require('express')();
+const express           = require('express');
 const passport          = require('passport');
 const configurePassport = require('./config/passport');
 const awilixConfig      = require('./config/awilix');
@@ -12,6 +12,7 @@ const getInfo           = require('./info/info');
 const initMongoose      = require('./config/mongoose');
 const config            = require('./config/config.js');
 
+const app = express();
 require('./data/seed-data')();
 
 // PARSERS
@@ -35,6 +36,11 @@ app.use(awilixExpress.loadControllers('**/*-router.js'))
 const articlesRouter = require('./articles');
 app.use('/', articlesRouter); // Loading articles router separately because it uses router.param which is not expose by awilix's createController wrapper.
 app.get('/info', (req, res) => getInfo.then(info => res.send(info)));
+
+app.use(express.static('public'));
+app.use('/', (req, res) => {
+    res.sendfile('public/index.html');
+});
 
 // DEFAULT ERROR HANDLER
 app.use((err, req, res, next) => {

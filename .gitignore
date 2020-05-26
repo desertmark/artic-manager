@@ -62,3 +62,7 @@ typings/
 
 #version
 **/info/version.json
+
+#heroku
+.DS_Store
+/*.env
