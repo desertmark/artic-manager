@@ -63,7 +63,7 @@ class ArticlesController {
     }
     
     patchById(req, res) {
-        req.body.id = res.locals.article._id;
+        req.body._id = res.locals.article._id;
         this.articleService.updateArticle(req.body)
         .then(article => {
             console.log('PUT: Articles', article)
