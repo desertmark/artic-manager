@@ -51,7 +51,8 @@ class ArticleService {
      * @param {*} article 
      */
     updateArticle(article) {
-        return this.articleRepository.updateArticle(article);
+        const dbArticle = this.articleFactory(article);
+        return this.articleRepository.updateArticle(dbArticle);
     }
 
     /**
