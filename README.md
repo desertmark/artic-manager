@@ -1,13 +1,18 @@
 # Artic/Manager
+
 An Articles Manager REST API Base on NodeJS
 
 ## Run the project.
 
 To run the project you will need to install the following softwares:
+
 1. Docker
 2. NodeJS
+3. Run the parse-service: `docker run -p 7047:80 desertmark/parse-service:0.0.1`
+   * This service is used by the endpoint `PATCH: /articles/xls`
 
 To run the project:
+
 1. Restore Packages with  `npm i`
 2. Run the database container with `npm run docker:localdb`
 3. Run the app with `npm start`

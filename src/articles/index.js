@@ -19,6 +19,8 @@ const ctrlBuilder = awilixExpress
 .post('/', 'post', {before: passport.authenticateJwt(ADMIN)})
 .post('/search', 'postSearch',{before: [passport.authenticateJwt(ANONYMOUS), middlewares.parseFieldsToObject]})
 .patch('/','patch', {before: passport.authenticateJwt(ADMIN)})
+.patch('/csv','patchCsv', {before: passport.authenticateJwt(ADMIN)})
+.patch('/xls','patchXls', {before: passport.authenticateJwt(ADMIN)})
 .patch('/:id', 'patchById', {before: passport.authenticateJwt(ADMIN)})
 .delete('/:id', 'delete', {before: passport.authenticateJwt(ADMIN)});
 

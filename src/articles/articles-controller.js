@@ -76,24 +76,6 @@ class ArticlesController {
     }
     
     patch(req, res) {
-        const bulkFile = req.files ? req.files.bulk : null;
-        if(bulkFile) {
-            if (!this.statusService.inProgress) {
-                this.fileService.parseCsvFromStream(bulkFile).then(json =>{
-                    this.articleService.updateByChunks(json);
-                    console.log(`PATCH: Articles, By File. ${json.length} articles to process.`);
-                    res.sendStatus(204);
-                })
-                .catch(err => {
-                    console.error(`PATCH: Articles By File`, err);
-                    res.status(500).send(err.toObject() || err.message);
-                 });
-                return;
-            } else {
-                res.sendStatus(409);
-            }
-        }
-        
         // update by code range
         try {
             const model = new UpdateByCodeRangeModel(req.body);
@@ -109,6 +91,42 @@ class ArticlesController {
         } catch(error) {
             console.error('PATCH: Articles By Code Range', error);
             res.status(error.status || 500).send(error.toObject());
+        }
+    }
+
+    patchCsv(req, res) {
+        const bulkFile = req.files ? req.files.bulk : null;
+        if (!this.statusService.inProgress) {
+            this.fileService.parseCsvFromStream(bulkFile).then(json =>{
+                this.articleService.updateByChunks(json);
+                console.log(`PATCH: Articles, By File. ${json.length} articles to process.`);
+                res.sendStatus(204);
+            })
+            .catch(err => {
+                console.error(`PATCH: Articles By File`, err);
+                res.status(500).send(err.toObject() || err.message);
+             });
+            return;
+        } else {
+            res.sendStatus(409);
+        }
+    }
+
+    patchXls(req,res) {
+        const bulkFile = req.files ? req.files.bulk : null;
+        if (!this.statusService.inProgress) {
+            this.fileService.parseXls(bulkFile).then(json =>{
+                this.articleService.updateByChunks(json);
+                console.log(`PATCH: Articles, By File. ${json.length} articles to process.`);
+                res.sendStatus(204);
+            })
+            .catch(err => {
+                console.error(`PATCH: Articles By File`, err);
+                res.status(500).send(err.toObject() || err.message);
+             });
+            return;
+        } else {
+            res.sendStatus(409);
         }
     }
 
